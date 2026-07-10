@@ -2,6 +2,11 @@
 <html>
 <head>
   <base target="_top">
+  <!-- 🌟 1. 加入這行：強制手機以最佳比例顯示，不亂縮放 (解決排版跑掉) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- 🌟 2. 加入這行：引入思源黑體 (Noto Sans TC)，解決中文字怪怪的問題 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Varela+Round&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link rel="apple-touch-icon" href="https://i.ibb.co/4wjzSzZZ/IMG-3882.jpg">
@@ -11,14 +16,25 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <style>
-    /* 100% 保留原本的 CSS 樣式 */
     :root {
       --bg-color: #FDF7F9; --primary-pink: #FFB7B2; --primary-green: #88D8B0; --primary-blue: #A0C4FF;
       --text-pink: #FFB7B2; --text-green: #67B695; --text-blue: #7B9ACC;
       --secondary: #B5EAD7; --accent: #C7CEEA; --text: #5D5C61; --text-light: #aaa; --card-bg: #FFFFFF;
       --shadow: 0 4px 15px rgba(255, 183, 178, 0.3); --current-theme: var(--primary-pink);
     }
-    body { font-family: 'Varela Round', sans-serif; background-color: var(--bg-color); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+    body { 
+      /* 🌟 3. 修改這行：補上蘋果與微軟的標準中文字體，保證字體漂亮清晰 */
+      font-family: 'Varela Round', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif; 
+      background-color: var(--bg-color); 
+      color: var(--text); 
+      margin: 0; 
+      padding: 0; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      min-height: 100vh; 
+      overflow-x: hidden; 
+    }
     ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; } ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; } input[type=number] { -moz-appearance: textfield; }
     @media screen and (max-width: 768px) { .form-input, .form-select { font-size: 16px !important; } }
