@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -27,16 +27,12 @@
     ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; } ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; } input[type=number] { -moz-appearance: textfield; }
     @media screen and (max-width: 768px) { .form-input, .form-select { font-size: 16px !important; } }
-    #go-top-btn { position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white; width: 50px; height: 50px; border-radius: 50%; border: none; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); font-size: 1.5rem; cursor: pointer; display: none; z-index: 1000; transition: opacity 0.3s; }
     #home-screen { text-align: center; width: 100%; max-width: 600px; padding: 20px; box-sizing: border-box; margin-top: 5vh; }
     h1 { color: var(--text); font-size: 2rem; margin-bottom: 20px; }
     .quick-add-box { background: white; border-radius: 25px; padding: 20px; box-shadow: var(--shadow); text-align: left; margin-bottom: 30px; border: 2px solid var(--accent); }
     .box-title { font-size: 1.1rem; color: var(--primary-pink); margin-bottom: 15px; font-weight: bold; text-align: center; }
     .form-row { margin-bottom: 15px; } .form-row label { display: block; font-size: 0.85rem; color: #888; margin-bottom: 8px; }
     .form-input, .form-select { width: 100%; padding: 10px; border-radius: 12px; border: 1px solid #ddd; font-family: inherit; box-sizing: border-box; outline: none; }
-    .form-input:focus, .form-select:focus { border-color: var(--primary-pink); }
-    .input-wrapper { position: relative; display: flex; align-items: center; }
-    .clear-btn { position: absolute; right: 10px; color: #999; cursor: pointer; font-size: 1.2rem; display: none; width: 25px; height: 25px; text-align: center; line-height: 25px; border-radius: 50%; background: rgba(238, 238, 238, 0.5); }
     .radio-group { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
     .radio-label { flex: 1; text-align: center; padding: 8px; border-radius: 15px; border: 1px solid #eee; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
     .radio-input { display: none; }
@@ -46,61 +42,49 @@
     .start-btn { background: linear-gradient(135deg, var(--primary-pink), #FF9AA2); color: white; border: none; padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.2s; margin-top: 20px; }
     #dashboard { display: none; width: 100%; max-width: 600px; position: relative; padding: 20px; box-sizing: border-box; }
     .nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .back-btn { background: white; color: var(--accent); border: 2px solid var(--accent); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); }
+    .back-btn { background: white; color: var(--accent); border: 2px solid var(--accent); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; }
     .top-tabs { display: flex; background: white; border-radius: 20px; padding: 5px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); margin-bottom: 20px; }
-    .tab-item { flex: 1; text-align: center; padding: 10px 0; border-radius: 15px; font-size: 0.95rem; cursor: pointer; color: #999; transition: all 0.3s; }
+    .tab-item { flex: 1; text-align: center; padding: 10px 0; border-radius: 15px; font-size: 0.95rem; cursor: pointer; color: #999; }
     .tab-item.active { background: #C7CEEA; color: white; font-weight: bold; }
     .page-container { display: none; animation: fadeIn 0.3s; } .page-container.active { display: block; }
     .controls { background: var(--card-bg); padding: 15px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px; }
     .top-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
     .section-title { font-size: 1.2rem; font-weight: bold; border-left: 4px solid var(--current-theme); padding-left: 10px; }
-    .balance-badge { background: #F8F9FA; border: 2px solid #ddd; padding: 5px 12px; border-radius: 15px; text-align: right; min-width: 80px; }
+    .balance-badge { background: #F8F9FA; border: 2px solid #ddd; padding: 5px 12px; border-radius: 15px; text-align: right; }
     .balance-label { font-size: 0.7rem; color: #aaa; display: block; } .balance-amount { font-weight: bold; font-size: 1rem; }
-    .stats-container { display: flex; justify-content: space-between; gap: 5px; padding: 5px 0; border-top: 1px dashed #eee; border-bottom: 1px dashed #eee; }
-    .stat-item { flex: 1; text-align: center; opacity: 0.6; transform: scale(0.95); cursor: pointer; padding: 8px 0; border-radius: 15px; transition: all 0.2s; }
-    .stat-item.active { opacity: 1; transform: scale(1.05); }
+    .stats-container { display: flex; justify-content: space-between; gap: 5px; }
+    .stat-item { flex: 1; text-align: center; opacity: 0.6; cursor: pointer; padding: 8px 0; border-radius: 15px; }
+    .stat-item.active { opacity: 1; background: #eee; }
     .stat-value { font-size: 1.1rem; font-weight: bold; }
-    .stat-item.type-exp.active { background: var(--primary-pink); color: white; border: 2px solid var(--primary-pink); box-shadow: 0 4px 10px rgba(255, 183, 178, 0.4); }
-    .stat-item.type-inc.active { background: var(--primary-green); color: white; border: 2px solid var(--primary-green); box-shadow: 0 4px 10px rgba(136, 216, 176, 0.4); }
-    .stat-item.type-tra.active { background: var(--primary-blue); color: white; border: 2px solid var(--primary-blue); box-shadow: 0 4px 10px rgba(160, 196, 255, 0.4); }
-    .stat-item.active .stat-label { color: rgba(255, 255, 255, 0.9); }
-    .view-toggle-container { display: flex; background: #eee; border-radius: 20px; padding: 3px; margin-top: 5px; }
+    .view-toggle-container { display: flex; background: #eee; border-radius: 20px; padding: 3px; }
     .view-btn { flex: 1; text-align: center; padding: 6px 0; border-radius: 17px; cursor: pointer; color: #999; }
     .view-btn.active { background: var(--current-theme); color: white; font-weight: bold; }
-    .account-card { background: var(--card-bg); border-radius: 25px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow); transition: all 0.3s; }
-    .account-card.colored-cat { border-left: 8px solid #eee; }
-    .account-title { font-size: 1.3rem; border-bottom: 2px dashed var(--accent); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; color: var(--text); }
-    .title-text { color: #fac57f; font-weight: bold; }
+    .account-card { background: var(--card-bg); border-radius: 25px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow); }
+    .account-title { font-size: 1.3rem; border-bottom: 2px dashed var(--accent); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; }
     .cat-item { display: flex; justify-content: space-between; padding: 12px 10px; background: #F8F9FA; margin-bottom: 8px; border-radius: 12px; cursor: pointer; }
-    .transfer-card { background: var(--card-bg); border-radius: 20px; padding: 15px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(160, 196, 255, 0.2); border-left: 5px solid var(--primary-blue); display: flex; flex-direction: column; gap: 8px; }
-    .tf-header { display: flex; justify-content: space-between; align-items: center; } .tf-flow { display: flex; align-items: center; gap: 8px; font-weight: bold; } .tf-amt { color: var(--text-blue); font-weight: bold; font-size: 1.1rem; }
-    .status-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); cursor: default; transition: transform 0.2s; border-left: 5px solid var(--accent); }
-    .status-name { font-size: 1.1rem; color: #666; margin-bottom: 5px; } .status-balance { font-size: 1.5rem; font-weight: bold; color: var(--text); }
+    .status-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); }
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 200; }
-    .modal { background: white; padding: 25px; border-radius: 30px; width: 85%; max-width: 400px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); border: 2px solid var(--accent); display: flex; flex-direction: column; max-height: 80vh; }
-    #modal-content { overflow-y: auto; padding-right: 5px; flex-grow: 1; margin-bottom: 10px; }
-    .detail-row-container { position: relative; overflow: hidden; border-bottom: 1px solid #eee; }
-    .detail-row { display: flex; justify-content: space-between; padding: 12px 0; font-size: 0.95rem; align-items: center; background: white; position: relative; z-index: 2; transition: transform 0.2s ease-out; width: 100%; }
+    .modal { background: white; padding: 25px; border-radius: 30px; width: 85%; max-width: 400px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; max-height: 80vh; }
+    #modal-content { overflow-y: auto; flex-grow: 1; }
+    .detail-row-container { position: relative; overflow: hidden; margin-bottom: 8px; }
+    .detail-row { display: flex; justify-content: space-between; padding: 12px; background: white; width: 100%; box-sizing: border-box; }
     .detail-row.swiped { transform: translateX(-70px); }
-    .detail-info { flex: 1; } .detail-main { font-weight: bold; color: #555; } .detail-note { font-size: 0.8rem; color: #aaa; margin-top: 2px; display: block; background: #f9f9f9; padding: 3px 6px; border-radius: 5px; width: fit-content; }
-    .detail-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
+    .detail-note { font-size: 0.8rem; color: #aaa; background: #f9f9f9; padding: 3px 6px; border-radius: 5px; }
     .loading { text-align: center; color: var(--accent); display: none; margin: 20px; }
-    .data-hidden { filter: blur(5px); pointer-events: none; user-select: none; transition: filter 0.3s; }
-    .chip-group-wrapper { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; align-items: center; -ms-overflow-style: none; scrollbar-width: none; }
-    .chip-group-wrapper::-webkit-scrollbar { display: none; }
-    .chip-btn { padding: 8px 16px; border-radius: 20px; background: #eee; color: #666; font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; border: 1px solid transparent; user-select: none; }
-    .chip-btn.active { background: var(--current-theme); color: white; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .calc-btn-trigger { background: var(--accent); color: white; border: none; border-radius: 12px; width: 45px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-left: 10px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0; }
+    .data-hidden { filter: blur(5px); pointer-events: none; }
+    .chip-group-wrapper { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
+    .chip-btn { padding: 8px 16px; border-radius: 20px; background: #eee; color: #666; font-size: 0.9rem; cursor: pointer; white-space: nowrap; }
+    .chip-btn.active { background: var(--current-theme); color: white; font-weight: bold; }
+    .calc-btn-trigger { background: var(--accent); color: white; border: none; border-radius: 12px; width: 45px; height: 42px; font-size: 1.2rem; margin-left: 10px; cursor: pointer; }
     .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
-    .calc-grid button { background: #f8f9fa; border: 1px solid #eee; border-radius: 15px; padding: 15px; font-size: 1.3rem; cursor: pointer; color: #555; transition: all 0.1s; }
-    .calc-grid button:active { transform: scale(0.95); background: #e0e0e0; }
-    .calc-grid button.operator { background: var(--secondary); color: #fff; font-weight: bold; border: none; }
-    .calc-grid button.action { background: var(--primary-pink); color: #fff; font-weight: bold; border: none; }
+    .calc-grid button { background: #f8f9fa; border: 1px solid #eee; border-radius: 15px; padding: 15px; font-size: 1.3rem; cursor: pointer; }
+    .calc-grid button.operator { background: var(--secondary); color: #fff; }
+    .calc-grid button.action { background: var(--primary-pink); color: #fff; }
+    .chart-container { position: relative; width: 100%; height: 300px; background: white; border-radius: 20px; padding: 15px; box-sizing: border-box; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 <body>
-  <button id="go-top-btn" onclick="topFunction()"><i class="fas fa-arrow-up"></i></button>
 
   <div id="home-screen">
     <h1>✨ Elin Money Diary</h1>
@@ -128,8 +112,7 @@
           <label>金額</label>
           <div class="input-wrapper" style="display: flex;">
             <div style="position: relative; flex: 1; display: flex; align-items: center;">
-              <input type="number" id="form-amount" class="form-input" placeholder="$$" required oninput="toggleClearBtn()">
-              <span id="clear-amount-btn" class="clear-btn" onclick="clearAmount()">×</span>
+              <input type="number" id="form-amount" class="form-input" placeholder="$$" required>
             </div>
             <button type="button" class="calc-btn-trigger" onclick="openCalc()"><i class="fas fa-calculator"></i></button>
           </div>
@@ -159,7 +142,8 @@
           <label>小分類</label>
           <div class="chip-group-wrapper">
             <div id="subCat-chips" style="display:flex; gap:8px;"></div>
-            <select id="form-subCat" style="display:none;" onchange="updateChipActive('form-subCat', 'subCat-chips')"></select>
+            <!-- 加上 class="form-select" 讓樣式與帳戶完全一致 -->
+            <select id="form-subCat" class="form-select" style="display:none; width:auto; padding:8px 12px;" onchange="updateChipActive('form-subCat', 'subCat-chips')"></select>
           </div>
         </div>
         <div class="form-row">
@@ -191,6 +175,7 @@
       <div class="tab-item" onclick="switchPage('status')">帳戶狀態</div>
       <div class="tab-item" onclick="switchPage('charts')">統計圖表</div>
     </div>
+    
     <div id="page-flow" class="page-container active">
       <div class="controls">
         <div class="top-row">
@@ -198,55 +183,50 @@
           <div class="balance-badge"><span class="balance-label">本月結餘</span><span class="balance-amount" id="balance-val">$0</span></div>
         </div>
         <div class="stats-container">
-          <div class="stat-item type-exp active" id="stat-exp" onclick="setType('支出')"><div class="stat-label">總支出</div><div class="stat-value" id="val-exp">$0</div></div>
-          <div class="stat-item type-inc" id="stat-inc" onclick="setType('收入')"><div class="stat-label">總收入</div><div class="stat-value" id="val-inc">$0</div></div>
-          <div class="stat-item type-tra" id="stat-tra" onclick="setType('轉帳')"><div class="stat-label">總轉帳</div><div class="stat-value" id="val-tra">$0</div></div>
+          <div class="stat-item active" id="stat-exp" onclick="setType('支出')"><div class="stat-label">總支出</div><div class="stat-value" id="val-exp">$0</div></div>
+          <div class="stat-item" id="stat-inc" onclick="setType('收入')"><div class="stat-label">總收入</div><div class="stat-value" id="val-inc">$0</div></div>
+          <div class="stat-item" id="stat-tra" onclick="setType('轉帳')"><div class="stat-label">總轉帳</div><div class="stat-value" id="val-tra">$0</div></div>
         </div>
-        <div class="chip-group-wrapper" style="margin-bottom: 10px; border-bottom: 1px dashed #eee;">
+        <div class="chip-group-wrapper">
           <div id="dash-month-chips" style="display:flex; gap:8px;"></div>
           <select id="month-select" style="display:none;" onchange="updateChipActive('month-select', 'dash-month-chips'); preloadAllData(this.value)"></select>
         </div>
         
         <div class="view-toggle-container">
-          <div class="view-btn active" id="view-acc" onclick="setView('account')">依帳戶</div>
+          <div class="view-btn active" id="view-date" onclick="setView('date')">依日期</div>
           <div class="view-btn" id="view-cat" onclick="setView('category')">依大類</div>
-          <div class="view-btn" id="view-date" onclick="setView('date')">依日期</div>
+          <div class="view-btn" id="view-acc" onclick="setView('account')">依帳戶</div>
         </div>
-
-        <div id="sort-control-container" style="display:none; justify-content:flex-end; margin-top:5px;">
-          <div class="chip-btn active" id="sort-btn" onclick="toggleSortOrder()" style="padding: 4px 12px; font-size: 0.8rem; background:#C7CEEA; color:white;">
-            <i class="fas fa-sort-amount-down"></i> 新 ➔ 舊
-          </div>
+        <div id="sort-control-container" style="display:flex; justify-content:flex-end;">
+          <div class="chip-btn active" id="sort-btn" onclick="toggleSortOrder()" style="padding: 4px 12px; font-size: 0.8rem;">新 ➔ 舊</div>
         </div>
-
       </div>
       <div id="loading" class="loading"><i class="fas fa-spinner fa-spin"></i> 讀取資料中...</div>
       <div id="content-area"></div>
     </div>
+
     <div id="page-status" class="page-container">
       <div class="controls"><div class="top-row"><div class="section-title">帳戶狀態</div><div class="balance-badge"><span class="balance-label">總資產</span><span class="balance-amount" id="total-assets-val">$0</span></div></div></div>
       <div id="status-area"></div>
     </div>
-    <div id="page-charts" class="page-container"><div class="chart-container"><canvas id="myChart"></canvas></div></div>
+
+    <div id="page-charts" class="page-container">
+      <div class="controls"><div class="section-title">支出圓餅圖</div></div>
+      <div class="chart-container"><canvas id="myChart"></canvas></div>
+    </div>
     
     <div id="page-today" class="page-container">
-      <div class="controls">
-        <div class="top-row">
-          <div class="section-title" style="border-left-color: #A0C4FF;">今日即時看板</div>
-          <div style="font-size: 0.9rem; color: var(--primary-pink); font-weight: bold;">Today's Feed</div>
-        </div>
-      </div>
-      <div id="today-loading" class="loading"><i class="fas fa-spinner fa-spin"></i> 我翻一下今天紀錄...</div>
+      <div class="controls"><div class="section-title">今日即時看板</div></div>
+      <div id="today-loading" class="loading"><i class="fas fa-spinner fa-spin"></i> 正在翻找今日紀錄...</div>
       <div id="today-content-area"></div>
     </div>
   </div>
 
-  <div id="modal" class="modal-overlay" onclick="closeModal(event)"><div class="modal"><div class="modal-header" id="modal-title" style="font-weight: bold; font-size:1.1rem; color:#4A3F3D;">詳情</div><div id="modal-filter-area" class="modal-filter" style="display:none;"><select id="modal-month-select" onchange="filterModalHistory()"></select></div><div id="modal-content"></div><button class="close-btn" onclick="document.getElementById('modal').style.display='none'" style="margin-top:10px; width:100%; padding:10px; border-radius:12px; background:#eee; border:none; cursor:pointer;">關閉</button></div></div>
+  <div id="modal" class="modal-overlay" onclick="closeModal(event)"><div class="modal"><div id="modal-title" style="font-weight:bold;margin-bottom:10px;">詳情</div><div id="modal-content"></div><button onclick="document.getElementById('modal').style.display='none'" style="margin-top:10px;padding:10px;border-radius:12px;background:#eee;border:none;cursor:pointer;">關閉</button></div></div>
 
   <div id="calc-modal" class="modal-overlay" onclick="closeCalc(event)">
     <div class="modal" style="max-width: 320px;">
-      <div class="modal-header">簡易計算機</div>
-      <div id="calc-display" style="font-size:2.2rem; text-align:right; margin-bottom:15px; background:#f1f1f1; padding:15px; border-radius:15px; overflow-x:auto; white-space:nowrap;">0</div>
+      <div id="calc-display" style="font-size:2.2rem; text-align:right; margin-bottom:15px; background:#f1f1f1; padding:15px; border-radius:15px;">0</div>
       <div class="calc-grid">
         <button type="button" onclick="calcClear()" class="action">C</button>
         <button type="button" onclick="calcInput('(')">(</button>
@@ -268,13 +248,13 @@
         <button type="button" onclick="calcInput('.')">.</button>
         <button type="button" onclick="calcEval()" class="action">=</button>
       </div>
-      <button class="submit-btn" style="margin-top:0;" onclick="confirmCalc()">完成</button>
+      <button class="submit-btn" onclick="confirmCalc()">完成</button>
     </div>
   </div>
 
   <script>
     // ----------------------------------------------------
-    // Firebase 設定與初始化 (你的原版金鑰)
+    // 🌟 Firebase 核心載入
     // ----------------------------------------------------
     const firebaseConfig = {
       apiKey: "AIzaSyA6NFdF8zu_ymnHFB_jshwT94Fbadfm_uc",
@@ -288,72 +268,45 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.firestore();
 
-    // 🌟 這裡填上你的 Gemini Worker 網址
-    const OCR_WORKER_URL = "gemini-api-backend.abc552211.workers.dev"; 
+    const OCR_WORKER_URL = "https://gemini-api-backend.abc552211.workers.dev"; 
 
-    // ----------------------------------------------------
-    // 全局變數
-    // ----------------------------------------------------
-    let currentType = '支出';
-    let currentView = 'account';
-    let currentSortOrder = 'desc'; 
-    let monthlyCache = {}; 
-    let formOptions = null;
-    let isPrivacyMode = false;
-    let calcVal = '';
-    let chartInstance = null;
+    let currentType = '支出'; let currentView = 'date'; let currentSortOrder = 'desc'; 
+    let monthlyCache = {}; let formOptions = null; let isPrivacyMode = false; let calcVal = ''; let chartInstance = null;
 
     function getFormattedDateStr(date) {
       let d = date || new Date();
       return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
     }
 
-    // 🌟 發票掃描與 AI 辨識串接
     async function handleInvoiceScan(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
+      const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = async function(e) {
-        const base64Data = e.target.result.split(',')[1]; 
+        const base64Data = e.target.result.split(',')[1];
         const scanBtn = document.getElementById('scan-invoice-btn');
-        const originalText = scanBtn.innerHTML;
-        scanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AI 努力辨識中...';
-        
+        scanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AI 辨識中...';
         try {
           const response = await fetch(OCR_WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ imageBase64: base64Data })
           });
-          
-          const aiResult = await response.json(); 
-          
+          const aiResult = await response.json();
           document.getElementById('form-amount').value = aiResult.amount;
           document.getElementById('form-note').value = aiResult.note;
-          
           document.getElementById('form-mainCat').value = aiResult.mainCat;
-          updateChipActive('form-mainCat', 'mainCat-chips');
-          updateSubCats();
-          
+          updateChipActive('form-mainCat', 'mainCat-chips'); updateSubCats();
           document.getElementById('form-subCat').value = aiResult.subCat;
           updateChipActive('form-subCat', 'subCat-chips');
-          
-          toggleClearBtn();
-          alert('✨ AI 發票辨識成功！欄位已自動填妥。');
-          
-        } catch (err) {
-          alert('辨識失敗，請檢查 Worker 網址或稍後再試：' + err.message);
-        } finally {
-          scanBtn.innerHTML = originalText;
-        }
+          alert('✨ AI 發票辨識完成！');
+        } catch (err) { alert('辨識失敗，請檢查密鑰是否正確：' + err.message); }
+        finally { scanBtn.innerHTML = '<i class="fas fa-camera"></i> 拍取發票自動帶入'; }
       };
       reader.readAsDataURL(file);
     }
 
-    // 🌟 初始化畫面
     window.onload = function() {
-      const realOptions = {
+      formOptions = {
         months: ["2026/7","2026/6"],
         accounts: ["現金","郵局","元大","中信","富邦","玉山","ipassMoney","玉山卡","悠遊卡","股票","元大虛擬帳"],
         expenseOrder: ["生活支出","理財支出","其他支出"],
@@ -361,19 +314,17 @@
         categories: {
           "生活支出": ["食物","日用品","交通","保養","房租","水電","娛樂","學習","數位訂閱","醫療"],
           "理財支出": ["職工勞健保","投資"],
+          "other支出": ["紅包","調整"], 
           "其他支出": ["紅包","調整"],
           "工作收入": ["墊上課程","兒童課程","器械課程","商業演出","打工兼職"],
           "理財收入": ["利息","其他投資收入"],
           "其他收入": ["中獎中彩","調整"]
         }
       };
-      initForm(realOptions);
-      db.collection('settings').doc('formOptions').set(realOptions).catch(e => {});
+      initForm(formOptions);
     };
 
     function initForm(data) {
-      if (!data) return;
-      formOptions = data;
       const mSel = document.getElementById('form-month'); mSel.innerHTML = '';
       data.months.forEach(m => { let o = document.createElement('option'); o.value = m; o.text = m; mSel.add(o); });
       const aSel = document.getElementById('form-account'), aSel2 = document.getElementById('form-account2');
@@ -389,346 +340,232 @@
     }
 
     async function loadMonths() {
-      const loading = document.getElementById('loading');
-      if (loading) loading.style.display = 'block';
-      try {
-        const docRef = await db.collection('settings').doc('formOptions').get();
-        const months = docRef.exists ? docRef.data().months : [];
-        const s = document.getElementById('month-select'); s.innerHTML = '';
-        months.forEach(m => { let o = document.createElement('option'); o.value = m; o.text = m; s.add(o); });
-        syncChips('month-select', 'dash-month-chips');
-        preloadAllData(s.value);
-      } catch (e) { console.error(e); }
+      const s = document.getElementById('month-select'); s.innerHTML = '';
+      formOptions.months.forEach(m => { let o = document.createElement('option'); o.value = m; o.text = m; s.add(o); });
+      syncChips('month-select', 'dash-month-chips');
+      preloadAllData(s.value || formOptions.months[0]);
     }
 
     async function preloadAllData(month) {
-      if (monthlyCache[month] && monthlyCache[month].completed === 4) {
-         updateStatsUI(month);
-         const activeTabEl = document.querySelector('.tab-item.active');
-         if (activeTabEl && activeTabEl.textContent === '帳戶狀態') renderStatusFromCache();
-         else renderCards(monthlyCache[month][currentType]);
-         return; 
+      if (!month) {
+        if (formOptions && formOptions.months && formOptions.months.length > 0) month = formOptions.months[0];
+        else return;
       }
-      const loading = document.getElementById('loading');
-      if (loading) loading.style.display = 'block'; 
+      
+      document.getElementById('loading').style.display = 'block';
       document.getElementById('content-area').innerHTML = '';
       
-      monthlyCache[month] = { 
-        completed: 0, stats: { '支出': 0, '收入': 0, '轉帳': 0 },
-        '支出': null, '收入': null, '轉帳': null, 'status': null
-      };
+      try {
+        const snapshot = await db.collection('entries').where('month', '==', month).get();
+        let docs = []; snapshot.forEach(doc => docs.push({ rowId: doc.id, ...doc.data() }));
 
-      const checkAndRender = () => {
-        monthlyCache[month].completed++;
-        if (monthlyCache[month].completed === 4) {
-          if (loading) loading.style.display = 'none'; 
-          if (document.getElementById('month-select').value === month) {
-             updateStatsUI(month);
-             const activeTabEl = document.querySelector('.tab-item.active');
-             if (activeTabEl && activeTabEl.textContent === '帳戶狀態') renderStatusFromCache();
-             else renderCards(monthlyCache[month][currentType]);
-          }
-        }
-      };
+        // 將所有 docs 存入 cache 讓帳戶總覽能夠讀取所有紀錄（包含調整）
+        monthlyCache[month] = { completed: 0, stats: { '支出': 0, '收入': 0, '轉帳': 0 }, '支出': {}, '收入': {}, '轉帳': [], 'status': {}, allDocs: docs };
 
-      db.collection('entries').where('month', '==', month).get().then(snapshot => {
-        let docs = [];
-        snapshot.forEach(doc => docs.push({ rowId: doc.id, ...doc.data() }));
-
-        ['支出', '收入', '轉帳'].forEach(t => {
-          let filtered = docs.filter(d => d.type === t);
-          let formattedData = {};
-          let totalAmt = 0;
-
-          if (t === '轉帳') {
-            formattedData = filtered.map(d => {
-              totalAmt += Number(d.amount);
-              return { from: d.account, to: d.account2, amount: Number(d.amount), note: d.note, rowId: d.rowId, dateStr: d.dateStr || getFormattedDateStr(new Date(d.timestamp)), type: '轉帳' };
-            });
-          } else {
-            filtered.forEach(d => {
-              let amt = Number(d.amount);
-              totalAmt += amt;
-              if (!formattedData[d.account]) formattedData[d.account] = {};
-              if (!formattedData[d.account][d.mainCat]) formattedData[d.account][d.mainCat] = { total: 0, details: [] };
-              formattedData[d.account][d.mainCat].total += amt;
-              formattedData[d.account][d.mainCat].details.push({
-                sub: d.subCat, amt: amt, note: d.note, rowId: d.rowId, dateStr: d.dateStr || getFormattedDateStr(new Date(d.timestamp)), date: d.timestamp ? new Date(d.timestamp).toLocaleString() : ''
-              });
-            });
-          }
-          monthlyCache[month][t] = formattedData;
-          monthlyCache[month].stats[t] = totalAmt;
-          checkAndRender();
-        });
-
-        let statusData = {};
-        if (formOptions && formOptions.accounts) {
-          formOptions.accounts.forEach(acc => { statusData[acc] = { name: acc, balance: 0 }; });
-        }
         docs.forEach(d => {
-          let amt = Number(d.amount);
-          if (d.type === '收入') {
-             if(!statusData[d.account]) statusData[d.account] = { name: d.account, balance: 0 };
-             statusData[d.account].balance += amt;
-          } else if (d.type === '支出') {
-             if(!statusData[d.account]) statusData[d.account] = { name: d.account, balance: 0 };
-             statusData[d.account].balance -= amt;
-          } else if (d.type === '轉帳') {
-             if(!statusData[d.account]) statusData[d.account] = { name: d.account, balance: 0 };
-             if(!statusData[d.account2]) statusData[d.account2] = { name: d.account2, balance: 0 };
-             statusData[d.account].balance -= amt;
-             statusData[d.account2].balance += amt;
+          let amt = Number(d.amount) || 0;
+          if (d.type === '轉帳') {
+            monthlyCache[month]['轉帳'].push({ from: d.account, to: d.account2, amount: amt, note: d.note, rowId: d.rowId, dateStr: d.dateStr || month, timestamp: d.timestamp });
+            monthlyCache[month].stats['轉帳'] = (monthlyCache[month].stats['轉帳'] || 0) + amt;
+          } else if (d.type === '支出' || d.type === '收入') {
+            if (!monthlyCache[month].stats[d.type]) monthlyCache[month].stats[d.type] = 0;
+            monthlyCache[month].stats[d.type] += amt;
+
+            if (!monthlyCache[month][d.type][d.account]) monthlyCache[month][d.type][d.account] = {};
+            if (!monthlyCache[month][d.type][d.account][d.mainCat]) monthlyCache[month][d.type][d.account][d.mainCat] = { total: 0, details: [] };
+            monthlyCache[month][d.type][d.account][d.mainCat].total += amt;
+            monthlyCache[month][d.type][d.account][d.mainCat].details.push({ sub: d.subCat, amt: amt, note: d.note, rowId: d.rowId, dateStr: d.dateStr || month, timestamp: d.timestamp });
           }
         });
-        monthlyCache[month]['status'] = statusData;
-        checkAndRender();
-      }).catch(err => {
-        monthlyCache[month].completed = 4;
-        checkAndRender();
-      });
+
+        if (formOptions && formOptions.accounts) {
+          formOptions.accounts.forEach(acc => { 
+            if (!monthlyCache[month]['status']) monthlyCache[month]['status'] = {};
+            monthlyCache[month]['status'][acc] = { name: acc, balance: 0 }; 
+          });
+        }
+        
+        docs.forEach(d => {
+          let amt = Number(d.amount) || 0;
+          if (d.type === '收入' && monthlyCache[month]['status'][d.account]) {
+            monthlyCache[month]['status'][d.account].balance += amt;
+          } else if (d.type === '支出' && monthlyCache[month]['status'][d.account]) {
+            monthlyCache[month]['status'][d.account].balance -= amt;
+          } else if (d.type === '轉帳') {
+            if (monthlyCache[month]['status'][d.account]) monthlyCache[month]['status'][d.account].balance -= amt;
+            if (monthlyCache[month]['status'][d.account2]) monthlyCache[month]['status'][d.account2].balance += amt;
+          } else if (d.type === '調整' && monthlyCache[month]['status'][d.account]) {
+            // 獨立的調整類型，只影響餘額不計入支出收入
+            monthlyCache[month]['status'][d.account].balance += (d.adjustSign * amt);
+          }
+        });
+
+        document.getElementById('loading').style.display = 'none';
+        updateStatsUI(month);
+        
+        const activeTabEl = document.querySelector('.tab-item.active');
+        if (activeTabEl && activeTabEl.textContent === '帳戶狀態') renderStatusFromCache();
+        else if (activeTabEl && activeTabEl.textContent === '統計圖表') loadChartData();
+        else renderCards(monthlyCache[month][currentType]);
+
+      } catch (err) {
+        console.error("載入失敗", err);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('content-area').innerHTML = '<div style="text-align:center;color:red;padding:20px;">載入失敗</div>';
+      }
+    }
+
+    function updateStatsUI(month) {
+      if (!monthlyCache[month] || !monthlyCache[month].stats) return;
+      const stats = monthlyCache[month].stats;
+      document.getElementById('val-exp').textContent = '$' + (stats['支出'] || 0).toLocaleString();
+      document.getElementById('val-inc').textContent = '$' + (stats['收入'] || 0).toLocaleString();
+      document.getElementById('val-tra').textContent = '$' + (stats['轉帳'] || 0).toLocaleString();
+      document.getElementById('balance-val').textContent = '$' + ((stats['收入'] || 0) - (stats['支出'] || 0)).toLocaleString();
     }
 
     async function submitForm() {
-      const amtInput = document.getElementById('form-amount');
-      const amount = parseFloat(amtInput.value);
-      if (!amtInput.value || isNaN(amount) || amount <= 0) {
-        alert('請輸入正確的金額喔！(๑•̀ㅂ•́)و✧'); amtInput.focus(); return;
-      }
-      const btn = document.querySelector('.submit-btn');
-      btn.disabled = true; btn.textContent = '傳送中...';
-
+      const amtInput = document.getElementById('form-amount'); const amount = parseFloat(amtInput.value);
+      if (!amtInput.value || isNaN(amount) || amount <= 0) { alert('請輸入正確的金額！'); return; }
+      
       const formObj = {
         type: document.querySelector('input[name="type"]:checked').value,
-        amount: amount,
-        account: document.getElementById('form-account').value,
+        amount: amount, account: document.getElementById('form-account').value,
         account2: document.getElementById('form-account2').value,
-        mainCat: document.getElementById('form-mainCat').value,
-        subCat: document.getElementById('form-subCat').value,
-        note: document.getElementById('form-note').value,
-        month: document.getElementById('form-month').value,
-        timestamp: Date.now(),
-        dateStr: getFormattedDateStr()
+        mainCat: document.getElementById('form-mainCat').value, subCat: document.getElementById('form-subCat').value,
+        note: document.getElementById('form-note').value, month: document.getElementById('form-month').value,
+        timestamp: Date.now(), dateStr: getFormattedDateStr()
       };
 
       try {
         await db.collection('entries').add(formObj);
-        btn.disabled = false; btn.textContent = '確認記帳';
-        alert('記帳成功！');
-        document.getElementById('quick-form').reset();
-        handleFormTypeChange();
-        toggleClearBtn();
-        syncChips('form-month', 'month-chips');
-        syncChips('form-account', 'account-chips', 3);
-        syncChips('form-account2', 'account2-chips', 3);
-        const currentMonth = document.getElementById('form-month').value;
-        if(monthlyCache[currentMonth]) monthlyCache[currentMonth] = null;
-      } catch(e) {
-        btn.disabled = false; btn.textContent = '確認記帳';
-        alert('失敗：' + e.message);
-      }
+        alert('記帳成功！'); document.getElementById('quick-form').reset(); handleFormTypeChange();
+      } catch(e) { alert('失敗：' + e.message); }
     }
 
     async function loadTodaySheetData() {
-      const area = document.getElementById('today-content-area');
-      const loading = document.getElementById('today-loading');
-      if (!area || !loading) return; 
+      const area = document.getElementById('today-content-area'); const loading = document.getElementById('today-loading');
       area.innerHTML = ''; loading.style.display = 'block';
       let todayStr = getFormattedDateStr();
       try {
         const snapshot = await db.collection('entries').where('dateStr', '==', todayStr).get();
         loading.style.display = 'none';
-        if (snapshot.empty) {
-          area.innerHTML = '<div style="text-align:center; color:#999; padding:40px 20px; font-size:1.1rem; background:white; border-radius:20px; box-shadow:var(--shadow);">☕ 今天還沒記帳喔</div>';
-          return;
-        }
-        let data = [];
-        snapshot.forEach(doc => {
-          let d = doc.data();
-          data.push({ rowId: doc.id, time: new Date(d.timestamp).toLocaleTimeString(), ...d });
-        });
+        if (snapshot.empty) { area.innerHTML = '<div style="text-align:center;color:#999;padding:30px;">今天還沒有紀錄喔～</div>'; return; }
+        let data = []; snapshot.forEach(doc => data.push({ rowId: doc.id, ...doc.data() }));
         renderTodayList(data);
-      } catch (error) {
-        loading.style.display = 'none';
-        area.innerHTML = '<div style="text-align:center; color:#FF9AA2; padding:40px 20px;">讀取失敗</div>';
-      }
+      } catch (e) { loading.style.display = 'none'; area.innerHTML = '<div style="text-align:center;color:red;padding:20px;">今日資料讀取失敗</div>'; }
+    }
+
+    function renderTodayList(list) {
+      const area = document.getElementById('today-content-area');
+      list.forEach(d => {
+        let row = document.createElement('div'); row.style.cssText = 'background:white;padding:12px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;box-shadow:0 2px 5px rgba(0,0,0,0.02);';
+        let color = d.type==='支出'?'var(--primary-pink)':(d.type==='收入'?'var(--primary-green)':'#7B9ACC');
+        if(d.type === '調整') color = '#aaa';
+        row.innerHTML = `
+          <div style="flex:1;text-align:left;">
+            <div style="font-size:0.8rem;color:#aaa;">${d.account} ${d.type==='轉帳'?'➔ '+d.account2:''}</div>
+            <strong>${d.mainCat || d.type}</strong> - ${d.subCat || ''}
+            ${d.note ? `<br><small style="color:#aaa;">${d.note}</small>` : ''}
+          </div>
+          <div style="color:${color};font-weight:bold;font-size:1.1rem;text-align:right;align-self:center;">$${Number(d.amount).toLocaleString()}</div>
+          <button onclick="deleteThisRow('${d.rowId}')" style="background:none;border:none;color:#ff6b6b;margin-left:10px;cursor:pointer;align-self:center;"><i class="fas fa-trash"></i></button>
+        `;
+        area.appendChild(row);
+      });
     }
 
     async function deleteThisRow(rowId) {
-      if (!rowId || rowId === 'undefined') { alert('找不到 ID！'); return; }
-      if (!confirm('確定要刪除這筆紀錄嗎？')) return;
+      if (!confirm('確定要刪除此筆紀錄嗎？')) return;
       try {
         await db.collection('entries').doc(rowId).delete();
-        alert('已成功刪除！');
-        document.getElementById('modal').style.display = 'none';
-        if (document.getElementById('page-today').classList.contains('active')) { loadTodaySheetData(); }
-        const mSel = document.getElementById('month-select');
-        if (mSel && mSel.value) { monthlyCache[mSel.value] = null; preloadAllData(mSel.value); }
-      } catch (e) { alert('刪除失敗：' + e.message); }
+        alert('刪除成功！');
+        if (document.getElementById('page-today').classList.contains('active')) loadTodaySheetData();
+        else preloadAllData(document.getElementById('month-select').value);
+      } catch (e) { alert('刪除失敗'); }
     }
 
-    window.adjustAccountBalance = async function(accountName, currentBalance) {
-      const inputEl = document.getElementById(`adj-input-${accountName}`);
-      if (!inputEl || inputEl.value === '') { alert('請輸入欲調整的總金額！'); return; }
-      const newBalance = parseFloat(inputEl.value);
-      if (isNaN(newBalance) || newBalance < 0) { alert('請輸入有效的正確金額！'); return; }
-      
-      const diff = newBalance - currentBalance;
-      if (diff === 0) { alert('金額未變更，無須建立調整紀錄！'); return; }
-
-      let type = diff > 0 ? '收入' : '支出';
-      let mainCat = diff > 0 ? '其他收入' : '其他支出';
-      let amt = Math.abs(diff);
-      const currentMonth = document.getElementById('month-select').value;
-
-      const formObj = {
-        type: type, amount: amt, account: accountName, account2: '', mainCat: mainCat, subCat: '調整', note: '系統自動平衡調整紀錄', month: currentMonth, timestamp: Date.now(), dateStr: getFormattedDateStr()
-      };
-
-      try {
-        await db.collection('entries').add(formObj);
-        alert(`帳戶 [${accountName}] 餘額更新成功！自動寫入一筆 $${amt.toLocaleString()} 的${type}調整紀錄。`);
-        if(monthlyCache[currentMonth]) monthlyCache[currentMonth] = null;
-        preloadAllData(currentMonth);
-      } catch(e) { alert('調整失敗：' + e.message); }
-    };
-
-    function renderCollapsibleEntries(entriesList, containerEl) {
-      containerEl.innerHTML = '';
-      if (!entriesList || entriesList.length === 0) {
-        containerEl.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">無交易紀錄</div>';
-        return;
-      }
-      
-      let grouped = {};
-      entriesList.forEach(item => {
-        let date = item.dateStr || '其他日期';
-        if (!grouped[date]) grouped[date] = [];
-        grouped[date].push(item);
-      });
-      
-      let sortedDates = Object.keys(grouped).sort((a, b) => {
-        return currentSortOrder === 'desc' ? new Date(b) - new Date(a) : new Date(a) - new Date(b);
-      });
-      
-      sortedDates.forEach((date, index) => {
-        let dateGroupContainer = document.createElement('div');
-        dateGroupContainer.style.marginBottom = '12px';
-        
-        let header = document.createElement('div');
-        header.style.cssText = 'background:#FAF8F6; padding:12px 15px; border-radius:15px; font-weight:bold; color:#7A6F6C; display:flex; justify-content:space-between; align-items:center; cursor:pointer; border:1px solid #eee; box-shadow: 0 1px 4px rgba(0,0,0,0.02);';
-        header.innerHTML = `<span><i class="far fa-calendar-alt" style="margin-right:8px; color:#D6C5C1;"></i>${date} (${grouped[date].length}筆)</span><i class="fas fa-chevron-down" id="arrow-${date}-${index}" style="transition:transform 0.2s; color:#aaa;"></i>`;
-        
-        let contentBox = document.createElement('div');
-        contentBox.id = `box-${date}-${index}`;
-        contentBox.style.display = 'block'; 
-        contentBox.style.marginTop = '8px';
-        
-        header.onclick = () => {
-          let isHidden = contentBox.style.display === 'none';
-          contentBox.style.display = isHidden ? 'block' : 'none';
-          document.getElementById(`arrow-${date}-${index}`).style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
-        };
-        
-        grouped[date].forEach(d => {
-          let rowContainer = document.createElement('div');
-          rowContainer.className = 'detail-row-container';
-          rowContainer.style.cssText = 'background: white; border-radius: 14px; margin-bottom: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);';
-          
-          let amtColor = 'var(--text)';
-          let prefix = '';
-          if (d.type === '支出') { amtColor = 'var(--primary-pink)'; prefix = '-'; }
-          else if (d.type === '收入') { amtColor = 'var(--text-green)'; prefix = '+'; }
-          else if (d.type === '轉帳') { amtColor = '#7B9ACC'; }
-          
-          let displayAmt = typeof d.amount === 'number' ? d.amount : (d.amt || 0);
-          
-          rowContainer.innerHTML = `
-            <div style="position: absolute; top:0; right:0; bottom:0; width: 70px; background: #ff6b6b; border-radius:0 14px 14px 0; display: flex; align-items: center; justify-content: center; color: white; z-index: 1;" onclick="deleteThisRow('${d.rowId}')">
-              <i class="fas fa-trash-alt"></i>
-            </div>
-            <div class="detail-row" ontouchstart="touchStart(event)" ontouchmove="touchMove(event, this)" ontouchend="touchEnd()" style="padding: 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; box-sizing:border-box;">
-              <div class="detail-info" style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">
-                <div style="font-size: 0.75rem; color: #aaa; margin-bottom:2px;">${d.account || d.accName || ''} ${d.type === '轉帳' ? '➔ ' + (d.account2 || d.to || '') : ''}</div>
-                <div class="detail-main" style="font-size:0.95rem; color:#444;">${d.mainCat || d.type || ''} ${d.subCat || d.sub ? '- ' + (d.subCat || d.sub) : ''}</div>
-                ${d.note ? `<span class="detail-note">${d.note}</span>` : ''}
-              </div>
-              <div class="detail-right" style="flex-shrink:0;">
-                <div style="font-size: 1.1rem; font-weight: bold; color: ${amtColor};">${prefix}$${Number(displayAmt).toLocaleString()}</div>
-              </div>
-            </div>
-          `;
-          contentBox.appendChild(rowContainer);
-        });
-        
-        dateGroupContainer.appendChild(header);
-        dateGroupContainer.appendChild(contentBox);
-        containerEl.appendChild(dateGroupContainer);
-      });
-    }
-
-    function toggleSortOrder() {
-      currentSortOrder = (currentSortOrder === 'desc') ? 'asc' : 'desc';
-      const btn = document.getElementById('sort-btn');
-      if (currentSortOrder === 'desc') {
-        btn.innerHTML = `<i class="fas fa-sort-amount-down"></i> 新 ➔ 舊`;
-      } else {
-        btn.innerHTML = `<i class="fas fa-sort-amount-up"></i> 舊 ➔ 新`;
-      }
+    function loadChartData() {
       const month = document.getElementById('month-select').value;
-      if(monthlyCache[month] && monthlyCache[month][currentType]) renderCards(monthlyCache[month][currentType]);
-    }
-
-    function setView(v) { 
-      currentView = v; 
-      document.getElementById('view-acc').classList.toggle('active', v === 'account');
-      document.getElementById('view-cat').classList.toggle('active', v === 'category');
-      document.getElementById('view-date').classList.toggle('active', v === 'date');
-      document.getElementById('sort-control-container').style.display = (v === 'date') ? 'flex' : 'none';
-
-      const month = document.getElementById('month-select').value; 
-      if(monthlyCache[month] && monthlyCache[month][currentType]) {
-        renderCards(monthlyCache[month][currentType]); 
+      const data = monthlyCache[month]['支出'] || {};
+      let catTotals = {};
+      for (let acc in data) {
+        for (let main in data[acc]) {
+          catTotals[main] = (catTotals[main] || 0) + data[acc][main].total;
+        }
       }
+      const labels = Object.keys(catTotals); const values = Object.values(catTotals);
+      if (chartInstance) chartInstance.destroy();
+      const ctx = document.getElementById('myChart').getContext('2d');
+      chartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{ data: values, backgroundColor: ['#FFB7B2','#FFDAC1','#E2F0CB','#B5EAD7','#C7CEEA','#FF9AA2'] }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
     }
 
     function renderCards(data) {
       const container = document.getElementById('content-area'); container.innerHTML = '';
-      if (!data) return;
+      if (!data) {
+        container.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">無交易紀錄</div>';
+        return;
+      }
       
       if (currentView === 'date' || Array.isArray(data)) {
-        let flattenedArray = [];
-        if (Array.isArray(data)) {
-          flattenedArray = data;
-        } else {
+        let arr = Array.isArray(data) ? data : [];
+        if (!Array.isArray(data)) {
           for (let acc in data) {
             for (let main in data[acc]) {
               data[acc][main].details.forEach(d => {
-                flattenedArray.push({
-                  rowId: d.rowId, account: acc, mainCat: main, subCat: d.sub, amount: d.amt, note: d.note, type: currentType, dateStr: d.dateStr
-                });
+                arr.push({ account: acc, mainCat: main, subCat: d.sub, amount: d.amt, note: d.note, dateStr: d.dateStr, rowId: d.rowId, timestamp: d.timestamp });
               });
             }
           }
         }
-        renderCollapsibleEntries(flattenedArray, container);
+        
+        arr.sort((a,b) => currentSortOrder === 'desc' ? new Date(b.dateStr) - new Date(a.dateStr) : new Date(a.dateStr) - new Date(b.dateStr));
+        
+        // ✨ 已修改：依日期顯示時會依照日期分組
+        let groupedByDate = {};
+        arr.forEach(d => {
+            if (!groupedByDate[d.dateStr]) groupedByDate[d.dateStr] = [];
+            groupedByDate[d.dateStr].push(d);
+        });
+
+        for (let date in groupedByDate) {
+            let dateHeader = document.createElement('div');
+            dateHeader.style.cssText = 'font-weight:bold; color:var(--text-blue); margin: 15px 0 8px 5px; border-bottom: 2px solid var(--accent); padding-bottom: 3px; font-size:1.1rem;';
+            dateHeader.innerHTML = `<i class="far fa-calendar-alt"></i> ${date}`;
+            container.appendChild(dateHeader);
+
+            groupedByDate[date].forEach(d => {
+              let r = document.createElement('div'); 
+              r.style.cssText = 'background:white;padding:12px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;text-align:left;box-shadow: 0 1px 4px rgba(0,0,0,0.02);';
+              r.innerHTML = `
+                <div>
+                  <small style="color:#aaa;">${d.account}</small><br>
+                  <strong>${d.mainCat || d.type || '轉帳'}</strong> - ${d.subCat || d.to || '未分類'} <small style="color:#888;">${d.note ? '('+d.note+')' : ''}</small>
+                </div>
+                <div style="font-weight:bold;align-self:center;">$${(d.amount||0).toLocaleString()}</div>
+              `;
+              container.appendChild(r);
+            });
+        }
       } else {
         let isCat = (currentView === 'category');
         let rData = isCat ? transformDataBySubCategory(data) : data;
+        
         for (let title in rData) {
-          let card = document.createElement('div'); card.className = 'account-card'; if (isCat) card.classList.add('colored-cat');
-          let total = 0; for (let sub in rData[title]) total += rData[title][sub].total;
-          card.innerHTML = `<div class="account-title"><span class="title-text">${title}</span><span>$${total.toLocaleString()}</span></div>`;
+          let card = document.createElement('div'); card.className = 'account-card';
+          card.innerHTML = `<div class="account-title"><span style="color:var(--text-blue);font-weight:bold;">${title}</span></div>`;
           for (let item in rData[title]) {
             let row = document.createElement('div'); row.className = 'cat-item';
             row.innerHTML = `<span>${item}</span><span>$${rData[title][item].total.toLocaleString()}</span>`;
-            
-            let detailsWithMeta = rData[title][item].details.map(d => {
-              return {
-                ...d, account: d.accName || title, mainCat: isCat ? title : item, subCat: d.sub, amount: d.amt, type: currentType, dateStr: d.dateStr || (d.date ? d.date.split(' ')[0] : '') || document.getElementById('month-select').value
-              };
-            });
-            row.onclick = () => showDetails(isCat ? title + " > " + item : item, detailsWithMeta);
+            // ✨ 已修改：為分類/帳戶卡片掛上點擊事件，彈出詳細明細
+            row.onclick = () => openDetailsModal(title, item, rData[title][item].details, null);
             card.appendChild(row);
           }
           container.appendChild(card);
@@ -755,17 +592,19 @@
       const month = document.getElementById('month-select').value;
       const area = document.getElementById('status-area'); area.innerHTML = '';
       if (!monthlyCache[month] || !monthlyCache[month]['status']) return;
-      const accounts = monthlyCache[month]['status'];
-      let total = 0;
+      const accounts = monthlyCache[month]['status']; let total = 0;
       for (let name in accounts) {
-        let bal = Number(accounts[name].balance) || 0; total += bal;
+        let bal = accounts[name].balance; total += bal;
         let card = document.createElement('div'); card.className = 'status-card';
+        card.style.cssText = 'background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); border-left: 5px solid var(--accent);';
+        // ✨ 已修改：加上帳戶名稱可點擊與修改餘額的獨立編輯小按鈕
         card.innerHTML = `
-          <div class="status-name" style="font-weight:bold; color:var(--text); font-size:1.1rem;">${name}</div>
-          <div class="status-balance" style="margin-bottom:10px;">$${bal.toLocaleString()}</div>
-          <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center; width:100%; box-sizing:border-box;">
-            <input type="number" placeholder="調整後總金額" class="form-input" style="padding: 8px 12px; font-size: 0.9rem; flex:1;" id="adj-input-${name}">
-            <button type="button" class="chip-btn active" style="padding: 8px 14px; margin: 0; font-size: 0.85rem; background:var(--accent); color:white; border-radius:12px; border:none; cursor:pointer;" onclick="adjustAccountBalance('${name}', ${bal})">確認調整</button>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong onclick="openAccountDetails('${name}')" style="cursor:pointer; flex:1; text-decoration:underline; text-decoration-color:var(--accent); text-underline-offset:4px;">${name}</strong>
+            <div style="display:flex; align-items:center; gap: 8px;">
+              <div style="font-size:1.4rem;font-weight:bold;color:var(--text);">$${bal.toLocaleString()}</div>
+              <button onclick="adjustBalance('${name}', ${bal})" style="background:none; border:none; color:var(--text-light); cursor:pointer; font-size:1.1rem; padding:5px;"><i class="fas fa-edit"></i></button>
+            </div>
           </div>
         `;
         area.appendChild(card);
@@ -775,62 +614,218 @@
 
     function switchPage(page) {
       document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
-      const tabs = document.querySelectorAll('.tab-item');
-      const idx = { 'flow': 0, 'status': 1, 'charts': 2 }[page];
-      if (tabs[idx]) tabs[idx].classList.add('active');
+      if(page==='flow') document.querySelectorAll('.tab-item')[0].classList.add('active');
+      if(page==='status') document.querySelectorAll('.tab-item')[1].classList.add('active');
+      if(page==='charts') document.querySelectorAll('.tab-item')[2].classList.add('active');
       document.querySelectorAll('.page-container').forEach(el => el.classList.remove('active'));
-      const targetPage = document.getElementById('page-' + page); if (targetPage) targetPage.classList.add('active');
+      document.getElementById('page-' + page).classList.add('active');
+      
       const month = document.getElementById('month-select').value;
-      if (page === 'flow' && monthlyCache[month] && monthlyCache[month][currentType]) renderCards(monthlyCache[month][currentType]);
+      if (page === 'flow') {
+        if (monthlyCache[month] && monthlyCache[month][currentType]) renderCards(monthlyCache[month][currentType]);
+      }
       else if (page === 'status') renderStatusFromCache();
-      else if (page === 'charts') loadChartData(); 
+      else if (page === 'charts') loadChartData();
     }
 
     function setType(t) { 
-      currentType = t; const root = document.documentElement;
+      currentType = t; 
+      document.querySelectorAll('.stat-item').forEach(el => el.classList.remove('active')); 
+      if(t==='支出') document.getElementById('stat-exp').classList.add('active'); 
+      if(t==='收入') document.getElementById('stat-inc').classList.add('active'); 
+      if(t==='轉帳') document.getElementById('stat-tra').classList.add('active'); 
+      
+      const month = document.getElementById('month-select').value; 
+      if (monthlyCache[month] && monthlyCache[month][t]) {
+        renderCards(monthlyCache[month][t]); 
+      }
+    }
+
+    function setView(v) { 
+      currentView = v; 
+      document.getElementById('view-date').classList.toggle('active', v === 'date');
+      document.getElementById('view-cat').classList.toggle('active', v === 'category');
+      document.getElementById('view-acc').classList.toggle('active', v === 'account');
+      document.getElementById('sort-control-container').style.display = (v === 'date') ? 'flex' : 'none'; 
+      
+      const month = document.getElementById('month-select').value; 
+      if (monthlyCache[month] && monthlyCache[month][currentType]) {
+        renderCards(monthlyCache[month][currentType]); 
+      }
+    }
+
+    function toggleSortOrder() { currentSortOrder = currentSortOrder === 'desc' ? 'asc' : 'desc'; document.getElementById('sort-btn').textContent = currentSortOrder==='desc'?'新 ➔ 舊':'舊 ➔ 新'; const month = document.getElementById('month-select').value; renderCards(monthlyCache[month][currentType]); }
+    
+    function syncChips(selectId, chipsId, limit = null) { 
+      const select = document.getElementById(selectId); 
+      const container = document.getElementById(chipsId); 
+      container.innerHTML = ''; 
+      const options = Array.from(select.options);
+      const itemsToRender = limit ? options.slice(0, limit) : options;
+
+      itemsToRender.forEach(opt => { 
+        const btn = document.createElement('div'); 
+        btn.className = 'chip-btn' + (select.value === opt.value ? ' active' : ''); 
+        btn.textContent = opt.text; 
+        btn.onclick = () => { 
+          select.value = opt.value; 
+          syncChips(selectId, chipsId, limit); 
+          select.dispatchEvent(new Event('change')); 
+        }; 
+        container.appendChild(btn); 
+      }); 
+      if (limit && options.length > limit) {
+        select.style.display = 'block';
+        select.style.width = 'auto';
+        select.style.padding = '8px 12px';
+      } else {
+        select.style.display = 'none';
+      }
+    }
+
+    function updateChipActive(selectId, chipsId) { const select = document.getElementById(selectId); const container = document.getElementById(chipsId); const text = select.options[select.selectedIndex]?.text; Array.from(container.children).forEach(c => c.classList.toggle('active', c.textContent === text)); }
+    function openCalc() { calcVal = document.getElementById('form-amount').value || ''; document.getElementById('calc-display').textContent = calcVal || '0'; document.getElementById('calc-modal').style.display = 'flex'; }
+    function closeCalc(e) { if(!e || e.target.id === 'calc-modal') document.getElementById('calc-modal').style.display = 'none'; }
+    function calcInput(v) { calcVal += v; document.getElementById('calc-display').textContent = calcVal; }
+    function calcClear() { calcVal = ''; document.getElementById('calc-display').textContent = '0'; }
+    function calcEval() { try { calcVal = String(eval(calcVal)); document.getElementById('calc-display').textContent = calcVal; } catch(e) { calcVal = ''; } }
+    function confirmCalc() { calcEval(); if(calcVal) document.getElementById('form-amount').value = calcVal; closeCalc(); }
+    
+    function handleFormTypeChange() { 
+      const t = document.querySelector('input[name="type"]:checked').value; 
+      const root = document.documentElement;
       if (t === '支出') root.style.setProperty('--current-theme', 'var(--primary-pink)');
       else if (t === '收入') root.style.setProperty('--current-theme', 'var(--primary-green)');
       else root.style.setProperty('--current-theme', 'var(--primary-blue)');
-      document.querySelectorAll('.stat-item').forEach(el => el.classList.remove('active'));
-      document.getElementById('stat-' + { '支出': 'exp', '收入': 'inc', '轉帳': 'tra' }[t]).classList.add('active');
-      const viewToggle = document.querySelector('.view-toggle-container'); if (viewToggle) viewToggle.style.display = (t === '轉帳') ? 'none' : 'flex';
-      const month = document.getElementById('month-select').value;
-      if (monthlyCache[month] && monthlyCache[month][t]) { renderCards(monthlyCache[month][t]); }
+
+      document.getElementById('row-acc2').style.display = t==='轉帳'?'block':'none'; 
+      document.getElementById('row-main').style.display = t==='轉帳'?'none':'block'; 
+      document.getElementById('row-sub').style.display = t==='轉帳'?'none':'block'; 
+      updateMainCats(); 
+    }
+
+    function updateMainCats() { const t = document.querySelector('input[name="type"]:checked').value; const s = document.getElementById('form-mainCat'); s.innerHTML = ''; const list = t==='支出'?formOptions.expenseOrder:formOptions.incomeOrder; list.forEach(k => { let o = document.createElement('option'); o.value = k; o.text = k; s.add(o); }); syncChips('form-mainCat', 'mainCat-chips'); updateSubCats(); }
+    // ✨ 已修改：小分類限制只顯示前三個，其餘透過選單選擇
+    function updateSubCats() { const m = document.getElementById('form-mainCat').value; const s = document.getElementById('form-subCat'); s.innerHTML = ''; if(formOptions.categories[m]) formOptions.categories[m].forEach(sub => { let o = document.createElement('option'); o.value = sub; o.text = sub; s.add(o); }); syncChips('form-subCat', 'subCat-chips', 3); }
+    
+    function enterTodayView() { 
+      document.getElementById('home-screen').style.display = 'none'; 
+      document.getElementById('dashboard').style.display = 'block'; 
+      document.querySelector('.top-tabs').style.display = 'none'; 
+      document.querySelectorAll('.page-container').forEach(el => el.classList.remove('active')); 
+      document.getElementById('page-today').classList.add('active'); 
+      loadTodaySheetData(); 
     }
     
-    function syncChips(selectId, chipsId, limit = null) {
-      const select = document.getElementById(selectId); const container = document.getElementById(chipsId);
-      if (!select || !container) return; container.innerHTML = '';
-      const opts = Array.from(select.options); const chipOpts = limit ? opts.slice(0, limit) : opts;
-      chipOpts.forEach(opt => {
-        const btn = document.createElement('div'); btn.className = 'chip-btn' + (select.value === opt.value ? ' active' : ''); btn.textContent = opt.text;
-        btn.onclick = () => { select.value = opt.value; updateChipActive(selectId, chipsId); if (select.onchange) select.onchange({target: select}); else select.dispatchEvent(new Event('change')); };
-        container.appendChild(btn);
-      });
-      if (limit && opts.length > limit) { select.style.display = 'block'; } else { select.style.display = 'none'; }
+    function enterDashboard() { 
+      document.getElementById('home-screen').style.display = 'none'; 
+      document.getElementById('dashboard').style.display = 'block'; 
+      document.querySelector('.top-tabs').style.display = 'flex'; 
+      setView('date');
+      loadMonths(); 
+      switchPage('flow'); 
     }
-    function updateChipActive(selectId, chipsId) { const select = document.getElementById(selectId); const container = document.getElementById(chipsId); const activeText = select.options[select.selectedIndex]?.text; Array.from(container.children).forEach(chip => { if (chip.textContent === activeText) chip.classList.add('active'); else chip.classList.remove('active'); }); }
-    function openCalc() { calcVal = document.getElementById('form-amount').value || ''; document.getElementById('calc-display').textContent = calcVal || '0'; document.getElementById('calc-modal').style.display = 'flex'; }
-    function closeCalc(e) { if(!e || e.target.id === 'calc-modal') document.getElementById('calc-modal').style.display = 'none'; }
-    function calcInput(val) { if (calcVal === '0' && val !== '.') calcVal = ''; calcVal += val; document.getElementById('calc-display').textContent = calcVal; }
-    function calcClear() { calcVal = ''; document.getElementById('calc-display').textContent = '0'; }
-    function calcEval() { try { if (!calcVal) return; let sanitized = calcVal.replace(/[^-()\d*+/.]/g, ''); let result = new Function('return ' + sanitized)(); calcVal = String(Math.round(result * 100) / 100); document.getElementById('calc-display').textContent = calcVal; } catch(e) { document.getElementById('calc-display').textContent = 'Error'; calcVal = ''; } }
-    function confirmCalc() { calcEval(); if (calcVal !== 'Error' && calcVal !== '') { document.getElementById('form-amount').value = calcVal; toggleClearBtn(); } closeCalc(); }
-    function togglePrivacy() { isPrivacyMode = !isPrivacyMode; document.getElementById('toggle-privacy-btn').innerHTML = isPrivacyMode ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>'; const targetIds = ['balance-val', 'val-exp', 'val-inc', 'val-tra', 'content-area', 'status-area', 'total-assets-val', 'today-content-area']; targetIds.forEach(id => { const el = document.getElementById(id); if (el) { if (isPrivacyMode) el.classList.add('data-hidden'); else el.classList.remove('data-hidden'); } }); }
-    function closeModal(e) { if (e.target.id === 'modal') e.target.style.display = 'none'; }
-    function handleFormTypeChange() { const t = document.querySelector('input[name="type"]:checked').value; const root = document.documentElement; if (t === '支出') root.style.setProperty('--current-theme', 'var(--primary-pink)'); else if (t === '收入') root.style.setProperty('--current-theme', 'var(--primary-green)'); else root.style.setProperty('--current-theme', 'var(--primary-blue)'); const rowAcc2 = document.getElementById('row-acc2'), rowMain = document.getElementById('row-main'), rowSub = document.getElementById('row-sub'), lblAcc = document.getElementById('lbl-acc'); if (t === '轉帳') { if(rowAcc2) rowAcc2.style.display = 'block'; if(rowMain) rowMain.style.display = 'none'; if(rowSub) rowSub.style.display = 'none'; if(lblAcc) lblAcc.textContent = '轉出帳戶'; } else { if(rowAcc2) rowAcc2.style.display = 'none'; if(rowMain) rowMain.style.display = 'block'; if(rowSub) rowSub.style.display = 'block'; if(lblAcc) lblAcc.textContent = '帳戶'; } updateMainCats(); }
-    function updateMainCats() { const t = document.querySelector('input[name="type"]:checked').value; const s = document.getElementById('form-mainCat'); s.innerHTML = ''; const list = (t === '支出') ? formOptions.expenseOrder : (t === '收入' ? formOptions.incomeOrder : []); if(list) list.forEach(k => { let o = document.createElement('option'); o.value = k; o.text = k; s.add(o); }); syncChips('form-mainCat', 'mainCat-chips'); updateSubCats(); }
-    function updateSubCats() { const m = document.getElementById('form-mainCat').value; const s = document.getElementById('form-subCat'); s.innerHTML = ''; if (formOptions.categories && formOptions.categories[m]) formOptions.categories[m].forEach(sub => { let o = document.createElement('option'); o.value = sub; o.text = sub; s.add(o); }); syncChips('form-subCat', 'subCat-chips'); }
-    function showDetails(title, details) { document.getElementById('modal-title').textContent = title; const modalContent = document.getElementById('modal-content'); renderCollapsibleEntries(details, modalContent); document.getElementById('modal').style.display = 'flex'; }
-    function enterTodayView() { document.getElementById('home-screen').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; if(document.querySelector('.top-tabs')) document.querySelector('.top-tabs').style.display = 'none'; document.querySelectorAll('.page-container').forEach(el => el.classList.remove('active')); document.getElementById('page-today').classList.add('active'); document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active')); loadTodaySheetData(); }
     function goHome() { document.getElementById('dashboard').style.display = 'none'; document.getElementById('home-screen').style.display = 'block'; }
-    function enterDashboard() { document.getElementById('home-screen').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; if(document.querySelector('.top-tabs')) document.querySelector('.top-tabs').style.display = 'flex'; loadMonths(); switchPage('flow'); }
+    function togglePrivacy() { isPrivacyMode = !isPrivacyMode; document.getElementById('content-area').classList.toggle('data-hidden', isPrivacyMode); document.getElementById('status-area').classList.toggle('data-hidden', isPrivacyMode); }
+    function closeModal(e) { if(e.target.id==='modal') e.target.style.display='none'; }
 
-    let xDown = null, yDown = null; function touchStart(evt) { xDown = evt.touches[0].clientX; yDown = evt.touches[0].clientY; }
-    function touchMove(evt, el) { if (!xDown || !yDown) return; let xDiff = xDown - evt.touches[0].clientX; let yDiff = yDown - evt.touches[0].clientY; if (Math.abs(xDiff) > Math.abs(yDiff)) { if (xDiff > 50) { el.classList.add('swiped'); document.querySelectorAll('.detail-row.swiped').forEach(row => { if(row !== el) row.classList.remove('swiped'); }); } else if (xDiff < -50) { el.classList.remove('swiped'); } } }
-    function touchEnd() { xDown = null; yDown = null; }
-    function toggleClearBtn() { const val = document.getElementById('form-amount').value; document.getElementById('clear-amount-btn').style.display = val.length > 0 ? 'block' : 'none'; }
-    function clearAmount() { document.getElementById('form-amount').value = ''; toggleClearBtn(); document.getElementById('form-amount').focus(); }
+    // ==========================================
+    // ✨ 全新補充區：處理帳戶與金流詳細明細＆餘額調整
+    // ==========================================
+    function openDetailsModal(title, subtitle, details, accContext) {
+        document.getElementById('modal-title').textContent = title + ' - ' + subtitle;
+        let content = document.getElementById('modal-content'); content.innerHTML = '';
+        
+        let grouped = {};
+        details.forEach(d => {
+            let date = d.dateStr || '未知日期';
+            if (!grouped[date]) grouped[date] = [];
+            grouped[date].push(d);
+        });
+        
+        let sortedDates = Object.keys(grouped).sort((a,b) => new Date(b) - new Date(a));
+        
+        if(sortedDates.length === 0) {
+            content.innerHTML = '<div style="text-align:center;color:#999;padding:20px;">無明細資料</div>';
+        } else {
+            sortedDates.forEach(date => {
+                let dateGroup = document.createElement('div');
+                dateGroup.style.marginBottom = '15px';
+                dateGroup.innerHTML = `<div style="font-weight:bold; color:var(--text-blue); margin-bottom:8px; border-bottom:2px solid #eee; padding-bottom:4px;">${date}</div>`;
+                
+                grouped[date].sort((a,b) => (b.timestamp||0) - (a.timestamp||0)).forEach(d => {
+                    let row = document.createElement('div');
+                    row.style.cssText = 'display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed #eee; font-size:0.9rem;';
+                    
+                    let amtStr = d.amount || d.amt; let color = '#5D5C61'; let prefix = ''; let subText = d.subCat || d.sub || '';
+                    
+                    if (d.type === '調整') {
+                        amtStr = (d.adjustSign > 0 ? '+' : '') + (d.adjustSign * d.amount); color = '#aaa';
+                        prefix = '<span style="background:#eee;padding:2px 6px;border-radius:4px;font-size:0.75rem;margin-right:5px;">調整</span>';
+                    } else if (d.type === '轉帳') {
+                        if (accContext === d.account) { amtStr = '-' + d.amount; color = 'var(--primary-pink)'; }
+                        else if (accContext === d.account2) { amtStr = '+' + d.amount; color = 'var(--primary-green)'; }
+                        else { amtStr = d.amount; color = 'var(--primary-blue)'; }
+                        prefix = '<span style="background:var(--primary-blue);color:white;padding:2px 6px;border-radius:4px;font-size:0.75rem;margin-right:5px;">轉帳</span>';
+                        subText = `${d.from || d.account} ➔ ${d.to || d.account2}`;
+                    } else {
+                        let isExp = d.type === '支出' || (!d.type && currentType === '支出');
+                        let isInc = d.type === '收入' || (!d.type && currentType === '收入');
+                        if (isExp) { amtStr = '-' + amtStr; color = 'var(--primary-pink)'; }
+                        if (isInc) { amtStr = '+' + amtStr; color = 'var(--primary-green)'; }
+                    }
+                    
+                    row.innerHTML = `
+                        <div style="flex:1; padding-right:10px;">
+                            <div style="display:flex; align-items:center; margin-bottom:4px;">${prefix}<strong style="color:#555;">${d.mainCat || d.type || title}</strong><span style="color:#888; margin-left:5px;">${subText}</span></div>
+                            ${d.note ? `<div style="font-size:0.8rem; color:#aaa;">${d.note}</div>` : ''}
+                        </div>
+                        <div style="font-weight:bold; color:${color}; align-self:center; white-space:nowrap;">
+                            ${typeof amtStr === 'number' ? '$'+amtStr.toLocaleString() : amtStr.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                        </div>
+                    `;
+                    dateGroup.appendChild(row);
+                });
+                content.appendChild(dateGroup);
+            });
+        }
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function openAccountDetails(accName) {
+        const month = document.getElementById('month-select').value;
+        const allDocs = monthlyCache[month].allDocs || [];
+        let accDocs = allDocs.filter(d => d.account === accName || (d.type === '轉帳' && d.account2 === accName));
+        openDetailsModal('帳戶明細', accName, accDocs, accName);
+    }
+
+    async function adjustBalance(acc, curBal) {
+      let input = prompt(`請輸入「${acc}」的最新正確餘額：`, curBal);
+      if (input === null || input.trim() === "") return;
+      let newBal = Number(input);
+      if (isNaN(newBal)) return alert('請輸入有效數字');
+      let diff = newBal - curBal;
+      if (diff === 0) return alert('餘額未變動');
+      
+      let formObj = {
+        type: '調整',
+        amount: Math.abs(diff),
+        account: acc,
+        note: diff > 0 ? '帳戶餘額盤盈' : '帳戶餘額盤虧',
+        month: document.getElementById('month-select').value || (new Date().getFullYear()+'/'+(new Date().getMonth()+1)),
+        timestamp: Date.now(),
+        dateStr: getFormattedDateStr(),
+        adjustSign: diff > 0 ? 1 : -1
+      };
+      
+      try {
+        await db.collection('entries').add(formObj);
+        alert('修改餘額成功！此調整不計入總支出與收入中。');
+        preloadAllData(formObj.month);
+      } catch(e) {
+        alert('調整失敗：'+e.message);
+      }
+    }
   </script>
 </body>
 </html>
