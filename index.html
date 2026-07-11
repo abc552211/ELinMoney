@@ -1,15 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  
-  <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <base target="_top">
-  <!-- 🌟 1. 加入這行：強制手機以最佳比例顯示，不亂縮放 (解決排版跑掉) -->
+  <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <base target="_top">
 
-  <!-- 🌟 2. 加入這行：引入思源黑體 (Noto Sans TC)，解決中文字怪怪的問題 -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Varela+Round&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link rel="apple-touch-icon" href="https://i.ibb.co/4wjzSzZZ/IMG-3882.jpg">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -25,17 +21,8 @@
       --shadow: 0 4px 15px rgba(255, 183, 178, 0.3); --current-theme: var(--primary-pink);
     }
     body { 
-      /* 🌟 3. 修改這行：補上蘋果與微軟的標準中文字體，保證字體漂亮清晰 */
       font-family: 'Varela Round', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif; 
-      background-color: var(--bg-color); 
-      color: var(--text); 
-      margin: 0; 
-      padding: 0; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      min-height: 100vh; 
-      overflow-x: hidden; 
+      background-color: var(--bg-color); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; 
     }
     ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; } ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; } input[type=number] { -moz-appearance: textfield; }
@@ -87,7 +74,7 @@
     .cat-item { display: flex; justify-content: space-between; padding: 12px 10px; background: #F8F9FA; margin-bottom: 8px; border-radius: 12px; cursor: pointer; }
     .transfer-card { background: var(--card-bg); border-radius: 20px; padding: 15px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(160, 196, 255, 0.2); border-left: 5px solid var(--primary-blue); display: flex; flex-direction: column; gap: 8px; }
     .tf-header { display: flex; justify-content: space-between; align-items: center; } .tf-flow { display: flex; align-items: center; gap: 8px; font-weight: bold; } .tf-amt { color: var(--text-blue); font-weight: bold; font-size: 1.1rem; }
-    .status-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); cursor: pointer; transition: transform 0.2s; border-left: 5px solid var(--accent); }
+    .status-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); cursor: default; transition: transform 0.2s; border-left: 5px solid var(--accent); }
     .status-name { font-size: 1.1rem; color: #666; margin-bottom: 5px; } .status-balance { font-size: 1.5rem; font-weight: bold; color: var(--text); }
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 200; }
     .modal { background: white; padding: 25px; border-radius: 30px; width: 85%; max-width: 400px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); border: 2px solid var(--accent); display: flex; flex-direction: column; max-height: 80vh; }
@@ -120,6 +107,15 @@
     <div class="quick-add-box">
       <div class="box-title"><i class="fas fa-edit"></i> 快速記帳</div>
       <form id="quick-form">
+        
+        <div class="form-row" style="background:#FAF8F6; padding:12px; border-radius:15px; border:1px dashed #D6C5C1; margin-bottom:15px; text-align:center;">
+          <label style="color:#7A6F6C; font-weight:bold; margin-bottom:5px;"><i class="fas fa-magic"></i> AI 智慧發票辨識</label>
+          <input type="file" id="invoice-file" accept="image/*" capture="camera" style="display:none;" onchange="handleInvoiceScan(event)">
+          <button type="button" class="chip-btn active" style="background:#D6C5C1; color:#4A3F3D; border:none; width:100%; padding:10px; font-size:0.9rem;" onclick="document.getElementById('invoice-file').click()">
+            <i class="fas fa-camera"></i> 拍取發票自動帶入
+          </button>
+        </div>
+
         <div class="radio-group">
           <input type="radio" name="type" id="radio-exp" class="radio-input" value="支出" checked onchange="handleFormTypeChange()">
           <label for="radio-exp" class="radio-label">支出</label>
@@ -210,10 +206,19 @@
           <div id="dash-month-chips" style="display:flex; gap:8px;"></div>
           <select id="month-select" style="display:none;" onchange="updateChipActive('month-select', 'dash-month-chips'); preloadAllData(this.value)"></select>
         </div>
+        
         <div class="view-toggle-container">
           <div class="view-btn active" id="view-acc" onclick="setView('account')">依帳戶</div>
           <div class="view-btn" id="view-cat" onclick="setView('category')">依大類</div>
+          <div class="view-btn" id="view-date" onclick="setView('date')">依日期</div>
         </div>
+
+        <div id="sort-control-container" style="display:none; justify-content:flex-end; margin-top:5px;">
+          <div class="chip-btn active" id="sort-btn" onclick="toggleSortOrder()" style="padding: 4px 12px; font-size: 0.8rem; background:#C7CEEA; color:white;">
+            <i class="fas fa-sort-amount-down"></i> 新 ➔ 舊
+          </div>
+        </div>
+
       </div>
       <div id="loading" class="loading"><i class="fas fa-spinner fa-spin"></i> 讀取資料中...</div>
       <div id="content-area"></div>
@@ -236,7 +241,7 @@
     </div>
   </div>
 
-  <div id="modal" class="modal-overlay" onclick="closeModal(event)"><div class="modal"><div class="modal-header" id="modal-title">詳情</div><div id="modal-filter-area" class="modal-filter" style="display:none;"><select id="modal-month-select" onchange="filterModalHistory()"></select></div><div id="modal-content"></div><button class="close-btn" onclick="document.getElementById('modal').style.display='none'">關閉</button></div></div>
+  <div id="modal" class="modal-overlay" onclick="closeModal(event)"><div class="modal"><div class="modal-header" id="modal-title" style="font-weight: bold; font-size:1.1rem; color:#4A3F3D;">詳情</div><div id="modal-filter-area" class="modal-filter" style="display:none;"><select id="modal-month-select" onchange="filterModalHistory()"></select></div><div id="modal-content"></div><button class="close-btn" onclick="document.getElementById('modal').style.display='none'" style="margin-top:10px; width:100%; padding:10px; border-radius:12px; background:#eee; border:none; cursor:pointer;">關閉</button></div></div>
 
   <div id="calc-modal" class="modal-overlay" onclick="closeCalc(event)">
     <div class="modal" style="max-width: 320px;">
@@ -268,9 +273,6 @@
   </div>
 
   <script>
-    // ----------------------------------------------------
-    // Firebase 設定與初始化 (⚠️ 請填入你專案的真實 Config)
-    // ----------------------------------------------------
     const firebaseConfig = {
       apiKey: "AIzaSyA6NFdF8zu_ymnHFB_jshwT94Fbadfm_uc",
       authDomain: "allmoneybackmyhome-c5ed9.firebaseapp.com",
@@ -283,11 +285,9 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.firestore();
 
-    // ----------------------------------------------------
-    // 全局變數 與 100% 同步資料植入
-    // ----------------------------------------------------
     let currentType = '支出';
     let currentView = 'account';
+    let currentSortOrder = 'desc'; // 🌟 新增：預設新到舊
     let monthlyCache = {}; 
     let formOptions = null;
     let isPrivacyMode = false;
@@ -295,30 +295,73 @@
     let chartInstance = null;
     let currentAccountHistory = [];
 
-    // 自動加載與強制更新你的表單基礎設定
-    window.onload = async function() {
-      try {
-        // 將你導出的資料完全與 Firebase 強制同步
-        const realOptions = {
-          months: ["2026/7","2026/6"],
-          accounts: ["現金","郵局","元大","中信","富邦","玉山","ipassMoney","玉山卡","悠遊卡","股票","元大虛擬帳"],
-          expenseOrder: ["生活支出","理財支出","其他支出"],
-          incomeOrder: ["工作收入","理財收入","其他收入"],
-          categories: {
-            "生活支出": ["食物","日用品","交通","保養","房租","水電","娛樂","學習","數位訂閱","醫療"],
-            "理財支出": ["職工勞健保","投資"],
-            "其他支出": ["紅包","調整"],
-            "工作收入": ["墊上課程","兒童課程","器械課程","商業演出","打工兼職"],
-            "理財收入": ["利息","其他投資收入"],
-            "其他收入": ["中獎中彩","調整"]
-          }
-        };
-        // 強制蓋寫，確保選單更新
-        await db.collection('settings').doc('formOptions').set(realOptions);
-        initForm(realOptions);
-      } catch (error) {
-        console.error("同步設定失敗", error);
-      }
+    function getFormattedDateStr(date) {
+      let d = date || new Date();
+      return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
+    }
+
+    async function handleInvoiceScan(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // 1. 將手機拍的照片轉成 Base64 字串
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const base64Data = e.target.result.split(',')[1]; // 去除 Data URL 前綴
+    
+    document.getElementById('today-loading').style.display = 'block'; // 顯示讀取中
+    
+    try {
+      // 2. 發送給你的 Cloudflare Worker 後端
+      const response = await fetch('gemini-api-backend.abc552211.workers.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64Data })
+      });
+      
+      const aiResult = await response.json(); // 收到乾淨的結構化資料 {}
+      
+      // 3. 100% 自動帶入前端記帳欄位！
+      document.getElementById('form-amount').value = aiResult.amount;
+      document.getElementById('form-note').value = aiResult.note;
+      
+      // 自動觸發大分類與小分類的晶片更新
+      document.getElementById('form-mainCat').value = aiResult.mainCat;
+      updateChipActive('form-mainCat', 'mainCat-chips');
+      updateSubCats();
+      
+      document.getElementById('form-subCat').value = aiResult.subCat;
+      updateChipActive('form-subCat', 'subCat-chips');
+      
+      toggleClearBtn();
+      alert('✨ AI 發票辨識成功！欄位已自動填妥。');
+      
+    } catch (err) {
+      alert('辨識失敗：' + err.message);
+    } finally {
+      document.getElementById('today-loading').style.display = 'none';
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+    window.onload = function() {
+      const realOptions = {
+        months: ["2026/7","2026/6"],
+        accounts: ["現金","郵局","元大","中信","富邦","玉山","ipassMoney","玉山卡","悠遊卡","股票","元大虛擬帳"],
+        expenseOrder: ["生活支出","理財支出","其他支出"],
+        incomeOrder: ["工作收入","理財收入","其他收入"],
+        categories: {
+          "生活支出": ["食物","日用品","交通","保養","房租","水電","娛樂","學習","數位訂閱","醫療"],
+          "理財支出": ["職工勞健保","投資"],
+          "其他支出": ["紅包","調整"],
+          "工作收入": ["墊上課程","兒童課程","器械課程","商業演出","打工兼職"],
+          "理財收入": ["利息","其他投資收入"],
+          "其他收入": ["中獎中彩","調整"]
+        }
+      };
+      initForm(realOptions);
+      db.collection('settings').doc('formOptions').set(realOptions).catch(e => {});
     };
 
     function initForm(data) {
@@ -338,9 +381,6 @@
       updateMainCats();
     }
 
-    // ----------------------------------------------------
-    // Firebase 核心資料處理
-    // ----------------------------------------------------
     async function loadMonths() {
       const loading = document.getElementById('loading');
       if (loading) loading.style.display = 'block';
@@ -396,7 +436,7 @@
           if (t === '轉帳') {
             formattedData = filtered.map(d => {
               totalAmt += Number(d.amount);
-              return { from: d.account, to: d.account2, amount: Number(d.amount), note: d.note, rowId: d.rowId };
+              return { from: d.account, to: d.account2, amount: Number(d.amount), note: d.note, rowId: d.rowId, dateStr: d.dateStr || getFormattedDateStr(new Date(d.timestamp)), type: '轉帳' };
             });
           } else {
             filtered.forEach(d => {
@@ -406,7 +446,7 @@
               if (!formattedData[d.account][d.mainCat]) formattedData[d.account][d.mainCat] = { total: 0, details: [] };
               formattedData[d.account][d.mainCat].total += amt;
               formattedData[d.account][d.mainCat].details.push({
-                sub: d.subCat, amt: amt, note: d.note, rowId: d.rowId, date: d.timestamp ? new Date(d.timestamp).toLocaleString() : ''
+                sub: d.subCat, amt: amt, note: d.note, rowId: d.rowId, dateStr: d.dateStr || getFormattedDateStr(new Date(d.timestamp)), date: d.timestamp ? new Date(d.timestamp).toLocaleString() : ''
               });
             });
           }
@@ -416,6 +456,9 @@
         });
 
         let statusData = {};
+        if (formOptions && formOptions.accounts) {
+          formOptions.accounts.forEach(acc => { statusData[acc] = { name: acc, balance: 0 }; });
+        }
         docs.forEach(d => {
           let amt = Number(d.amount);
           if (d.type === '收入') {
@@ -444,7 +487,7 @@
       const amtInput = document.getElementById('form-amount');
       const amount = parseFloat(amtInput.value);
       if (!amtInput.value || isNaN(amount) || amount <= 0) {
-        alert('請輸入正確的金額喔！(๑•̀ㅂ•開)و✧'); amtInput.focus(); return;
+        alert('請輸入正確的金額喔！(๑•̀ㅂ•́)و✧'); amtInput.focus(); return;
       }
       const btn = document.querySelector('.submit-btn');
       btn.disabled = true; btn.textContent = '傳送中...';
@@ -459,7 +502,7 @@
         note: document.getElementById('form-note').value,
         month: document.getElementById('form-month').value,
         timestamp: Date.now(),
-        dateStr: new Date().toLocaleDateString()
+        dateStr: getFormattedDateStr()
       };
 
       try {
@@ -485,7 +528,7 @@
       const loading = document.getElementById('today-loading');
       if (!area || !loading) return; 
       area.innerHTML = ''; loading.style.display = 'block';
-      let todayStr = new Date().toLocaleDateString();
+      let todayStr = getFormattedDateStr();
       try {
         const snapshot = await db.collection('entries').where('dateStr', '==', todayStr).get();
         loading.style.display = 'none';
@@ -518,83 +561,158 @@
       } catch (e) { alert('刪除失敗：' + e.message); }
     }
 
-    async function loadChartData() {
-      const month = document.getElementById('month-select').value;
-      if (!month) return;
+    window.adjustAccountBalance = async function(accountName, currentBalance) {
+      const inputEl = document.getElementById(`adj-input-${accountName}`);
+      if (!inputEl || inputEl.value === '') { alert('請輸入欲調整的總金額！'); return; }
+      const newBalance = parseFloat(inputEl.value);
+      if (isNaN(newBalance) || newBalance < 0) { alert('請輸入有效的正確金額！'); return; }
+      
+      const diff = newBalance - currentBalance;
+      if (diff === 0) { alert('金額未變更，無須建立調整紀錄！'); return; }
+
+      let type = diff > 0 ? '收入' : '支出';
+      let mainCat = diff > 0 ? '其他收入' : '其他支出';
+      let amt = Math.abs(diff);
+      const currentMonth = document.getElementById('month-select').value;
+
+      const formObj = {
+        type: type, amount: amt, account: accountName, account2: '', mainCat: mainCat, subCat: '調整', note: '系統自動平衡調整紀錄', month: currentMonth, timestamp: Date.now(), dateStr: getFormattedDateStr()
+      };
+
       try {
-        const snapshot = await db.collection('entries').where('month', '==', month).get();
-        let inc = 0, exp = 0;
-        snapshot.forEach(doc => {
-          let d = doc.data();
-          if(d.type === '收入') inc += Number(d.amount);
-          if(d.type === '支出') exp += Number(d.amount);
-        });
-        renderChart({ summary: { income: inc, expense: exp } });
-      } catch(e) { console.error(e); }
-    }
+        await db.collection('entries').add(formObj);
+        alert(`帳戶 [${accountName}] 餘額更新成功！自動寫入一筆 $${amt.toLocaleString()} 的${type}調整紀錄。`);
+        if(monthlyCache[currentMonth]) monthlyCache[currentMonth] = null;
+        preloadAllData(currentMonth);
+      } catch(e) { alert('調整失敗：' + e.message); }
+    };
 
-    // ----------------------------------------------------
-    // UI 控制與動態晶片按鈕模組 (保留原本運作邏輯)
-    // ----------------------------------------------------
-    function syncChips(selectId, chipsId, limit = null) {
-      const select = document.getElementById(selectId);
-      const container = document.getElementById(chipsId);
-      if (!select || !container) return; container.innerHTML = '';
-      const opts = Array.from(select.options);
-      const chipOpts = limit ? opts.slice(0, limit) : opts;
-      chipOpts.forEach(opt => {
-        const btn = document.createElement('div');
-        btn.className = 'chip-btn' + (select.value === opt.value ? ' active' : '');
-        btn.textContent = opt.text;
-        btn.onclick = () => {
-          select.value = opt.value; updateChipActive(selectId, chipsId);
-          if (select.onchange) select.onchange({target: select}); 
-          else select.dispatchEvent(new Event('change'));
+    // 🌟 核心增強：全新排序模組（支援新舊、舊新互切）
+    function renderCollapsibleEntries(entriesList, containerEl) {
+      containerEl.innerHTML = '';
+      if (!entriesList || entriesList.length === 0) {
+        containerEl.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">無交易紀錄</div>';
+        return;
+      }
+      
+      let grouped = {};
+      entriesList.forEach(item => {
+        let date = item.dateStr || '其他日期';
+        if (!grouped[date]) grouped[date] = [];
+        grouped[date].push(item);
+      });
+      
+      // 依全域 currentSortOrder 決定日期大標題的排序
+      let sortedDates = Object.keys(grouped).sort((a, b) => {
+        return currentSortOrder === 'desc' ? new Date(b) - new Date(a) : new Date(a) - new Date(b);
+      });
+      
+      sortedDates.forEach((date, index) => {
+        let dateGroupContainer = document.createElement('div');
+        dateGroupContainer.style.marginBottom = '12px';
+        
+        let header = document.createElement('div');
+        header.style.cssText = 'background:#FAF8F6; padding:12px 15px; border-radius:15px; font-weight:bold; color:#7A6F6C; display:flex; justify-content:space-between; align-items:center; cursor:pointer; border:1px solid #eee; box-shadow: 0 1px 4px rgba(0,0,0,0.02);';
+        header.innerHTML = `<span><i class="far fa-calendar-alt" style="margin-right:8px; color:#D6C5C1;"></i>${date} (${grouped[date].length}筆)</span><i class="fas fa-chevron-down" id="arrow-${date}-${index}" style="transition:transform 0.2s; color:#aaa;"></i>`;
+        
+        let contentBox = document.createElement('div');
+        contentBox.id = `box-${date}-${index}`;
+        contentBox.style.display = 'block'; 
+        contentBox.style.marginTop = '8px';
+        
+        header.onclick = () => {
+          let isHidden = contentBox.style.display === 'none';
+          contentBox.style.display = isHidden ? 'block' : 'none';
+          document.getElementById(`arrow-${date}-${index}`).style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
         };
-        container.appendChild(btn);
+        
+        grouped[date].forEach(d => {
+          let rowContainer = document.createElement('div');
+          rowContainer.className = 'detail-row-container';
+          rowContainer.style.cssText = 'background: white; border-radius: 14px; margin-bottom: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);';
+          
+          let amtColor = 'var(--text)';
+          let prefix = '';
+          if (d.type === '支出') { amtColor = 'var(--primary-pink)'; prefix = '-'; }
+          else if (d.type === '收入') { amtColor = 'var(--text-green)'; prefix = '+'; }
+          else if (d.type === '轉帳') { amtColor = '#7B9ACC'; }
+          
+          let displayAmt = typeof d.amount === 'number' ? d.amount : (d.amt || 0);
+          
+          rowContainer.innerHTML = `
+            <div style="position: absolute; top:0; right:0; bottom:0; width: 70px; background: #ff6b6b; border-radius:0 14px 14px 0; display: flex; align-items: center; justify-content: center; color: white; z-index: 1;" onclick="deleteThisRow('${d.rowId}')">
+              <i class="fas fa-trash-alt"></i>
+            </div>
+            <div class="detail-row" ontouchstart="touchStart(event)" ontouchmove="touchMove(event, this)" ontouchend="touchEnd()" style="padding: 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; box-sizing:border-box;">
+              <div class="detail-info" style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">
+                <div style="font-size: 0.75rem; color: #aaa; margin-bottom:2px;">${d.account || d.accName || ''} ${d.type === '轉帳' ? '➔ ' + (d.account2 || d.to || '') : ''}</div>
+                <div class="detail-main" style="font-size:0.95rem; color:#444;">${d.mainCat || d.type || ''} ${d.subCat || d.sub ? '- ' + (d.subCat || d.sub) : ''}</div>
+                ${d.note ? `<span class="detail-note">${d.note}</span>` : ''}
+              </div>
+              <div class="detail-right" style="flex-shrink:0;">
+                <div style="font-size: 1.1rem; font-weight: bold; color: ${amtColor};">${prefix}$${Number(displayAmt).toLocaleString()}</div>
+              </div>
+            </div>
+          `;
+          contentBox.appendChild(rowContainer);
+        });
+        
+        dateGroupContainer.appendChild(header);
+        dateGroupContainer.appendChild(contentBox);
+        containerEl.appendChild(dateGroupContainer);
       });
-      if (limit && opts.length > limit) { select.style.display = 'block'; } else { select.style.display = 'none'; }
     }
 
-    function updateChipActive(selectId, chipsId) {
-      const select = document.getElementById(selectId);
-      const container = document.getElementById(chipsId);
-      const activeText = select.options[select.selectedIndex]?.text;
-      Array.from(container.children).forEach(chip => {
-        if (chip.textContent === activeText) chip.classList.add('active');
-        else chip.classList.remove('active');
-      });
+    // 🌟 新增功能：控制新舊與舊新切換切換
+    function toggleSortOrder() {
+      currentSortOrder = (currentSortOrder === 'desc') ? 'asc' : 'desc';
+      const btn = document.getElementById('sort-btn');
+      if (currentSortOrder === 'desc') {
+        btn.innerHTML = `<i class="fas fa-sort-amount-down"></i> 新 ➔ 舊`;
+      } else {
+        btn.innerHTML = `<i class="fas fa-sort-amount-up"></i> 舊 ➔ 新`;
+      }
+      const month = document.getElementById('month-select').value;
+      if(monthlyCache[month] && monthlyCache[month][currentType]) renderCards(monthlyCache[month][currentType]);
     }
 
-    function openCalc() { calcVal = document.getElementById('form-amount').value || ''; document.getElementById('calc-display').textContent = calcVal || '0'; document.getElementById('calc-modal').style.display = 'flex'; }
-    function closeCalc(e) { if(!e || e.target.id === 'calc-modal') document.getElementById('calc-modal').style.display = 'none'; }
-    function calcInput(val) { if (calcVal === '0' && val !== '.') calcVal = ''; calcVal += val; document.getElementById('calc-display').textContent = calcVal; }
-    function calcClear() { calcVal = ''; document.getElementById('calc-display').textContent = '0'; }
-    function calcEval() { try { if (!calcVal) return; let sanitized = calcVal.replace(/[^-()\d*+/.]/g, ''); let result = new Function('return ' + sanitized)(); calcVal = String(Math.round(result * 100) / 100); document.getElementById('calc-display').textContent = calcVal; } catch(e) { document.getElementById('calc-display').textContent = 'Error'; calcVal = ''; } }
-    function confirmCalc() { calcEval(); if (calcVal !== 'Error' && calcVal !== '') { document.getElementById('form-amount').value = calcVal; toggleClearBtn(); } closeCalc(); }
-    function goHome() { document.getElementById('dashboard').style.display = 'none'; document.getElementById('home-screen').style.display = 'block'; }
-    function enterDashboard() { document.getElementById('home-screen').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; loadMonths(); switchPage('flow'); }
+    function setView(v) { 
+      currentView = v; 
+      document.getElementById('view-acc').classList.toggle('active', v === 'account');
+      document.getElementById('view-cat').classList.toggle('active', v === 'category');
+      document.getElementById('view-date').classList.toggle('active', v === 'date');
+      
+      // 🌟 只有切換到「依日期」視圖時，才顯示新舊排序按鈕
+      document.getElementById('sort-control-container').style.display = (v === 'date') ? 'flex' : 'none';
 
-    function updateStatsUI(month) {
-        if(!monthlyCache[month] || !monthlyCache[month].stats) return;
-        const s = monthlyCache[month].stats;
-        document.getElementById('val-exp').textContent = '$' + (s['支出'] || 0).toLocaleString();
-        document.getElementById('val-inc').textContent = '$' + (s['收入'] || 0).toLocaleString();
-        document.getElementById('val-tra').textContent = '$' + (s['轉帳'] || 0).toLocaleString();
-        let bal = (s['收入'] || 0) - (s['支出'] || 0);
-        document.getElementById('balance-val').textContent = '$' + bal.toLocaleString();
-        document.getElementById('balance-val').style.color = bal < 0 ? '#FF9AA2' : 'var(--text)';
+      const month = document.getElementById('month-select').value; 
+      if(monthlyCache[month] && monthlyCache[month][currentType]) {
+        renderCards(monthlyCache[month][currentType]); 
+      }
     }
 
     function renderCards(data) {
       const container = document.getElementById('content-area'); container.innerHTML = '';
       if (!data) return;
-      if (Array.isArray(data)) {
-        data.forEach(item => {
-          let card = document.createElement('div'); card.className = 'transfer-card';
-          card.innerHTML = `<div class="tf-header"><div class="tf-flow"><span>${item.from}</span><i class="fas fa-arrow-right"></i><span>${item.to}</span></div><div class="tf-amt">$${item.amount.toLocaleString()}</div></div><div style="font-size:0.75rem; color:#aaa;">${item.note || ''}</div>`;
-          container.appendChild(card);
-        });
+      
+      // 🌟 核心邏輯修改：當視圖切換為「依日期」時，打平結構直接進入分組
+      if (currentView === 'date' || Array.isArray(data)) {
+        let flattenedArray = [];
+        if (Array.isArray(data)) {
+          flattenedArray = data;
+        } else {
+          // 將原本依帳戶、依大類分類的多層結構打平為單一陣列
+          for (let acc in data) {
+            for (let main in data[acc]) {
+              data[acc][main].details.forEach(d => {
+                flattenedArray.push({
+                  rowId: d.rowId, account: acc, mainCat: main, subCat: d.sub, amount: d.amt, note: d.note, type: currentType, dateStr: d.dateStr
+                });
+              });
+            }
+          }
+        }
+        renderCollapsibleEntries(flattenedArray, container);
       } else {
         let isCat = (currentView === 'category');
         let rData = isCat ? transformDataBySubCategory(data) : data;
@@ -605,7 +723,13 @@
           for (let item in rData[title]) {
             let row = document.createElement('div'); row.className = 'cat-item';
             row.innerHTML = `<span>${item}</span><span>$${rData[title][item].total.toLocaleString()}</span>`;
-            row.onclick = () => showDetails(isCat ? title + " > " + item : item, rData[title][item].details);
+            
+            let detailsWithMeta = rData[title][item].details.map(d => {
+              return {
+                ...d, account: d.accName || title, mainCat: isCat ? title : item, subCat: d.sub, amount: d.amt, type: currentType, dateStr: d.dateStr || (d.date ? d.date.split(' ')[0] : '') || document.getElementById('month-select').value
+              };
+            });
+            row.onclick = () => showDetails(isCat ? title + " > " + item : item, detailsWithMeta);
             card.appendChild(row);
           }
           container.appendChild(card);
@@ -637,7 +761,14 @@
       for (let name in accounts) {
         let bal = Number(accounts[name].balance) || 0; total += bal;
         let card = document.createElement('div'); card.className = 'status-card';
-        card.innerHTML = `<div class="status-name">${name}</div><div class="status-balance">$${bal.toLocaleString()}</div>`;
+        card.innerHTML = `
+          <div class="status-name" style="font-weight:bold; color:var(--text); font-size:1.1rem;">${name}</div>
+          <div class="status-balance" style="margin-bottom:10px;">$${bal.toLocaleString()}</div>
+          <div style="margin-top: 12px; display: flex; gap: 8px; align-items: center; width:100%; box-sizing:border-box;">
+            <input type="number" placeholder="調整後總金額" class="form-input" style="padding: 8px 12px; font-size: 0.9rem; flex:1;" id="adj-input-${name}">
+            <button type="button" class="chip-btn active" style="padding: 8px 14px; margin: 0; font-size: 0.85rem; background:var(--accent); color:white; border-radius:12px; border:none; cursor:pointer;" onclick="adjustAccountBalance('${name}', ${bal})">確認調整</button>
+          </div>
+        `;
         area.appendChild(card);
       }
       document.getElementById('total-assets-val').textContent = '$' + total.toLocaleString();
@@ -668,89 +799,33 @@
       if (monthlyCache[month] && monthlyCache[month][t]) { renderCards(monthlyCache[month][t]); }
     }
     
-    function setView(v) { currentView = v; const month = document.getElementById('month-select').value; if(monthlyCache[month] && monthlyCache[month][currentType]) renderCards(monthlyCache[month][currentType]); }
+    function syncChips(selectId, chipsId, limit = null) {
+      const select = document.getElementById(selectId); const container = document.getElementById(chipsId);
+      if (!select || !container) return; container.innerHTML = '';
+      const opts = Array.from(select.options); const chipOpts = limit ? opts.slice(0, limit) : opts;
+      chipOpts.forEach(opt => {
+        const btn = document.createElement('div'); btn.className = 'chip-btn' + (select.value === opt.value ? ' active' : ''); btn.textContent = opt.text;
+        btn.onclick = () => { select.value = opt.value; updateChipActive(selectId, chipsId); if (select.onchange) select.onchange({target: select}); else select.dispatchEvent(new Event('change')); };
+        container.appendChild(btn);
+      });
+      if (limit && opts.length > limit) { select.style.display = 'block'; } else { select.style.display = 'none'; }
+    }
+    function updateChipActive(selectId, chipsId) { const select = document.getElementById(selectId); const container = document.getElementById(chipsId); const activeText = select.options[select.selectedIndex]?.text; Array.from(container.children).forEach(chip => { if (chip.textContent === activeText) chip.classList.add('active'); else chip.classList.remove('active'); }); }
+    function openCalc() { calcVal = document.getElementById('form-amount').value || ''; document.getElementById('calc-display').textContent = calcVal || '0'; document.getElementById('calc-modal').style.display = 'flex'; }
+    function closeCalc(e) { if(!e || e.target.id === 'calc-modal') document.getElementById('calc-modal').style.display = 'none'; }
+    function calcInput(val) { if (calcVal === '0' && val !== '.') calcVal = ''; calcVal += val; document.getElementById('calc-display').textContent = calcVal; }
+    function calcClear() { calcVal = ''; document.getElementById('calc-display').textContent = '0'; }
+    function calcEval() { try { if (!calcVal) return; let sanitized = calcVal.replace(/[^-()\d*+/.]/g, ''); let result = new Function('return ' + sanitized)(); calcVal = String(Math.round(result * 100) / 100); document.getElementById('calc-display').textContent = calcVal; } catch(e) { document.getElementById('calc-display').textContent = 'Error'; calcVal = ''; } }
+    function confirmCalc() { calcEval(); if (calcVal !== 'Error' && calcVal !== '') { document.getElementById('form-amount').value = calcVal; toggleClearBtn(); } closeCalc(); }
     function togglePrivacy() { isPrivacyMode = !isPrivacyMode; document.getElementById('toggle-privacy-btn').innerHTML = isPrivacyMode ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>'; const targetIds = ['balance-val', 'val-exp', 'val-inc', 'val-tra', 'content-area', 'status-area', 'total-assets-val', 'today-content-area']; targetIds.forEach(id => { const el = document.getElementById(id); if (el) { if (isPrivacyMode) el.classList.add('data-hidden'); else el.classList.remove('data-hidden'); } }); }
     function closeModal(e) { if (e.target.id === 'modal') e.target.style.display = 'none'; }
-    
-    function handleFormTypeChange() { 
-      const t = document.querySelector('input[name="type"]:checked').value;
-      const root = document.documentElement;
-      if (t === '支出') root.style.setProperty('--current-theme', 'var(--primary-pink)');
-      else if (t === '收入') root.style.setProperty('--current-theme', 'var(--primary-green)');
-      else root.style.setProperty('--current-theme', 'var(--primary-blue)');
-      const rowAcc2 = document.getElementById('row-acc2'), rowMain = document.getElementById('row-main'), rowSub = document.getElementById('row-sub'), lblAcc = document.getElementById('lbl-acc');
-      if (t === '轉帳') { if(rowAcc2) rowAcc2.style.display = 'block'; if(rowMain) rowMain.style.display = 'none'; if(rowSub) rowSub.style.display = 'none'; if(lblAcc) lblAcc.textContent = '轉出帳戶'; }
-      else { if(rowAcc2) rowAcc2.style.display = 'none'; if(rowMain) rowMain.style.display = 'block'; if(rowSub) rowSub.style.display = 'block'; if(lblAcc) lblAcc.textContent = '帳戶'; }
-      updateMainCats(); 
-    }
-    
-    function updateMainCats() {
-      const t = document.querySelector('input[name="type"]:checked').value;
-      const s = document.getElementById('form-mainCat'); s.innerHTML = '';
-      const list = (t === '支出') ? formOptions.expenseOrder : (t === '收入' ? formOptions.incomeOrder : []);
-      if(list) list.forEach(k => { let o = document.createElement('option'); o.value = k; o.text = k; s.add(o); });
-      syncChips('form-mainCat', 'mainCat-chips'); updateSubCats();
-    }
-    
-    function updateSubCats() {
-      const m = document.getElementById('form-mainCat').value;
-      const s = document.getElementById('form-subCat'); s.innerHTML = '';
-      if (formOptions.categories && formOptions.categories[m]) formOptions.categories[m].forEach(sub => { let o = document.createElement('option'); o.value = sub; o.text = sub; s.add(o); });
-      syncChips('form-subCat', 'subCat-chips'); 
-    }
-    
-    function showDetails(title, details) {
-      document.getElementById('modal-title').textContent = title;
-      let html = '';
-      [...details].reverse().forEach(d => {
-        html += `
-        <div class="detail-row-container">
-          <div style="position: absolute; top:0; right:0; bottom:0; width: 70px; background: #ff6b6b; display: flex; align-items: center; justify-content: center; color: white; z-index: 1;" onclick="deleteThisRow('${d.rowId}')"><i class="fas fa-trash-alt"></i></div>
-          <div class="detail-row" ontouchstart="touchStart(event)" ontouchmove="touchMove(event, this)" ontouchend="touchEnd(event, this)">
-            <div class="detail-info" style="padding-left: 5px;">
-              <div class="detail-main">${d.accName || ''}</div>
-              <div style="font-size: 0.75rem; color: #888;">${d.note || '無備註'}</div>
-            </div>
-            <div class="detail-right" style="padding-right: 5px;">
-              <div style="font-size: 0.9rem; font-weight: bold;">$${d.amt.toLocaleString()}</div>
-            </div>
-          </div>
-        </div>`;
-      });
-      document.getElementById('modal-content').innerHTML = html; document.getElementById('modal').style.display = 'flex';
-    }
-
-    function renderChart(data) {
-      const ctx = document.getElementById('myChart').getContext('2d'); if (chartInstance) chartInstance.destroy();
-      chartInstance = new Chart(ctx, {
-        type: 'bar', data: { labels: ['收入', '支出'], datasets: [{ data: [data.summary.income, data.summary.expense], backgroundColor: ['#88D8B0', '#FFB7B2'], borderRadius: 10, barThickness: 50 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: `淨收益: $${(data.summary.income - data.summary.expense).toLocaleString()}` } } }
-      });
-    }
-
-    function renderTodayList(data) {
-      const container = document.getElementById('today-content-area');
-      let html = '';
-      [...data].sort((a,b) => b.timestamp - a.timestamp).forEach(d => {
-        let amtColor = (d.type === '支出') ? 'var(--primary-pink)' : (d.type === '收入' ? 'var(--text-green)' : '#7B9ACC');
-        html += `
-        <div class="detail-row-container" style="background: white; border-radius: 15px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-          <div style="position: absolute; top:0; right:0; bottom:0; width: 70px; background: #ff6b6b; display: flex; align-items: center; justify-content: center; color: white; z-index: 1;" onclick="deleteThisRow('${d.rowId}')"><i class="fas fa-trash-alt"></i></div>
-          <div class="detail-row" ontouchstart="touchStart(event)" ontouchmove="touchMove(event, this)" style="padding: 15px;">
-            <div class="detail-info">
-              <div style="font-size: 0.7rem; color: #aaa;">${d.account || ''} ${d.type === '轉帳' ? '➔ ' + (d.account2 || '') : ''}</div>
-              <div class="detail-main">${d.mainCat || '轉帳'} ${d.subCat ? '- ' + d.subCat : ''}</div>
-              ${d.note ? `<span class="detail-note">${d.note}</span>` : ''}
-            </div>
-            <div class="detail-right"><div style="font-size: 1.1rem; font-weight: bold; color: ${amtColor};">$${Number(d.amount).toLocaleString()}</div></div>
-          </div>
-        </div>`;
-      });
-      container.innerHTML = html;
-    }
-
+    function handleFormTypeChange() { const t = document.querySelector('input[name="type"]:checked').value; const root = document.documentElement; if (t === '支出') root.style.setProperty('--current-theme', 'var(--primary-pink)'); else if (t === '收入') root.style.setProperty('--current-theme', 'var(--primary-green)'); else root.style.setProperty('--current-theme', 'var(--primary-blue)'); const rowAcc2 = document.getElementById('row-acc2'), rowMain = document.getElementById('row-main'), rowSub = document.getElementById('row-sub'), lblAcc = document.getElementById('lbl-acc'); if (t === '轉帳') { if(rowAcc2) rowAcc2.style.display = 'block'; if(rowMain) rowMain.style.display = 'none'; if(rowSub) rowSub.style.display = 'none'; if(lblAcc) lblAcc.textContent = '轉出帳戶'; } else { if(rowAcc2) rowAcc2.style.display = 'none'; if(rowMain) rowMain.style.display = 'block'; if(rowSub) rowSub.style.display = 'block'; if(lblAcc) lblAcc.textContent = '帳戶'; } updateMainCats(); }
+    function updateMainCats() { const t = document.querySelector('input[name="type"]:checked').value; const s = document.getElementById('form-mainCat'); s.innerHTML = ''; const list = (t === '支出') ? formOptions.expenseOrder : (t === '收入' ? formOptions.incomeOrder : []); if(list) list.forEach(k => { let o = document.createElement('option'); o.value = k; o.text = k; s.add(o); }); syncChips('form-mainCat', 'mainCat-chips'); updateSubCats(); }
+    function updateSubCats() { const m = document.getElementById('form-mainCat').value; const s = document.getElementById('form-subCat'); s.innerHTML = ''; if (formOptions.categories && formOptions.categories[m]) formOptions.categories[m].forEach(sub => { let o = document.createElement('option'); o.value = sub; o.text = sub; s.add(o); }); syncChips('form-subCat', 'subCat-chips'); }
+    function showDetails(title, details) { document.getElementById('modal-title').textContent = title; const modalContent = document.getElementById('modal-content'); renderCollapsibleEntries(details, modalContent); document.getElementById('modal').style.display = 'flex'; }
     let xDown = null, yDown = null; function touchStart(evt) { xDown = evt.touches[0].clientX; yDown = evt.touches[0].clientY; }
-    function touchMove(evt, el) { if (!xDown || !yDown) return; let xDiff = xDown - evt.touches[0].clientX; if (Math.abs(xDiff) > 50) { if (xDiff > 0) el.classList.add('swiped'); else el.classList.remove('swiped'); xDown = null; } }
+    function touchMove(evt, el) { if (!xDown || !yDown) return; let xDiff = xDown - evt.touches[0].clientX; let yDiff = yDown - evt.touches[0].clientY; if (Math.abs(xDiff) > Math.abs(yDiff)) { if (xDiff > 50) { el.classList.add('swiped'); document.querySelectorAll('.detail-row.swiped').forEach(row => { if(row !== el) row.classList.remove('swiped'); }); } else if (xDiff < -50) { el.classList.remove('swiped'); } } }
+    function touchEnd() { xDown = null; yDown = null; }
     function toggleClearBtn() { const val = document.getElementById('form-amount').value; document.getElementById('clear-amount-btn').style.display = val.length > 0 ? 'block' : 'none'; }
     function clearAmount() { document.getElementById('form-amount').value = ''; toggleClearBtn(); document.getElementById('form-amount').focus(); }
   </script>
