@@ -553,8 +553,21 @@
             container.appendChild(dateHeader);
 
             groupedByDate[date].forEach(d => {
+              // 1. 建立外層滑動容器
+              let containerDiv = document.createElement('div');
+              containerDiv.className = 'detail-row-container';
+              containerDiv.style.borderRadius = '12px';
+
+              // 2. 建立底層紅色刪除按鈕
+              let delBtn = document.createElement('div');
+              delBtn.style.cssText = 'position:absolute; right:0; top:0; width:70px; height:100%; background:#ff6b6b; color:white; display:flex; align-items:center; justify-content:center; border-radius:12px; cursor:pointer; z-index:1; font-size:1rem;';
+              delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+              delBtn.onclick = () => deleteThisRow(d.rowId);
+
+              // 3. 建立上層內容列
               let r = document.createElement('div'); 
-              r.style.cssText = 'background:white;padding:12px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;text-align:left;box-shadow: 0 1px 4px rgba(0,0,0,0.02);';
+              r.className = 'detail-row';
+              r.style.cssText = 'background:white; padding:12px; border-radius:12px; display:flex; justify-content:space-between; text-align:left; box-shadow: 0 1px 4px rgba(0,0,0,0.02); position:relative; z-index:2; transition:transform 0.2s ease; width:100%; box-sizing:border-box;';
               r.innerHTML = `
                 <div>
                   <small style="color:#aaa;">${d.account}</small><br>
@@ -562,7 +575,24 @@
                 </div>
                 <div style="font-weight:bold;align-self:center;">$${(d.amount||0).toLocaleString()}</div>
               `;
-              container.appendChild(r);
+
+              // 4. 綁定手勢滑動事件
+              let startX = 0;
+              r.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
+              r.addEventListener('touchmove', (e) => {
+                  let moveX = e.touches[0].clientX;
+                  let diff = startX - moveX;
+                  if (diff > 60) r.classList.add('swiped');         // 左滑拉出刪除鍵
+                  else if (diff < -30) r.classList.remove('swiped');   // 右滑收回刪除鍵
+              });
+              
+              // 點擊已拉開的項目時自動收回
+              r.addEventListener('click', () => { if(r.classList.contains('swiped')) r.classList.remove('swiped'); });
+
+              // 組裝結構並渲染
+              containerDiv.appendChild(delBtn);
+              containerDiv.appendChild(r);
+              container.appendChild(containerDiv);
             });
         }
       } else {
