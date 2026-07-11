@@ -428,6 +428,11 @@
       const amtInput = document.getElementById('form-amount'); const amount = parseFloat(amtInput.value);
       if (!amtInput.value || isNaN(amount) || amount <= 0) { alert('請輸入正確的金額！'); return; }
       
+      // 獲取按鈕並鎖定，避免連續點擊誤觸
+      const submitBtn = document.querySelector('.submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = '處理中...';
+      
       const formObj = {
         type: document.querySelector('input[name="type"]:checked').value,
         amount: amount, account: document.getElementById('form-account').value,
@@ -440,7 +445,13 @@
       try {
         await db.collection('entries').add(formObj);
         alert('記帳成功！'); document.getElementById('quick-form').reset(); handleFormTypeChange();
-      } catch(e) { alert('失敗：' + e.message); }
+      } catch(e) { 
+        alert('失敗：' + e.message); 
+      } finally {
+        // 處理完成後重新啟用按鈕
+        submitBtn.disabled = false;
+        submitBtn.textContent = '確認記帳';
+      }
     }
 
     async function loadTodaySheetData() {
@@ -726,7 +737,17 @@
       switchPage('flow'); 
     }
     function goHome() { document.getElementById('dashboard').style.display = 'none'; document.getElementById('home-screen').style.display = 'block'; }
-    function togglePrivacy() { isPrivacyMode = !isPrivacyMode; document.getElementById('content-area').classList.toggle('data-hidden', isPrivacyMode); document.getElementById('status-area').classList.toggle('data-hidden', isPrivacyMode); }
+    function togglePrivacy() { 
+      isPrivacyMode = !isPrivacyMode; 
+      document.getElementById('content-area').classList.toggle('data-hidden', isPrivacyMode); 
+      document.getElementById('status-area').classList.toggle('data-hidden', isPrivacyMode); 
+      // 同步隱藏上方區塊的所有金額數字
+      document.getElementById('balance-val').classList.toggle('data-hidden', isPrivacyMode);
+      document.getElementById('val-exp').classList.toggle('data-hidden', isPrivacyMode);
+      document.getElementById('val-inc').classList.toggle('data-hidden', isPrivacyMode);
+      document.getElementById('val-tra').classList.toggle('data-hidden', isPrivacyMode);
+      document.getElementById('total-assets-val').classList.toggle('data-hidden', isPrivacyMode);
+    }
     function closeModal(e) { if(e.target.id==='modal') e.target.style.display='none'; }
 
     // ==========================================
