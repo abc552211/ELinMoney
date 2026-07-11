@@ -110,8 +110,8 @@
         
         <div class="form-row" style="background:#FAF8F6; padding:12px; border-radius:15px; border:1px dashed #D6C5C1; margin-bottom:15px; text-align:center;">
           <label style="color:#7A6F6C; font-weight:bold; margin-bottom:5px;"><i class="fas fa-magic"></i> AI 智慧發票辨識</label>
-          <input type="file" id="invoice-file" accept="image/*" capture="camera" style="display:none;" onchange="handleInvoiceScan(event)">
-          <button type="button" class="chip-btn active" style="background:#D6C5C1; color:#4A3F3D; border:none; width:100%; padding:10px; font-size:0.9rem;" onclick="document.getElementById('invoice-file').click()">
+          <input type="file" id="invoice-file" accept="image/*" capture="environment" style="display:none;" onchange="handleInvoiceScan(event)">
+          <button type="button" id="scan-invoice-btn" class="chip-btn active" style="background:#D6C5C1; color:#4A3F3D; border:none; width:100%; padding:10px; font-size:0.9rem;" onclick="document.getElementById('invoice-file').click()">
             <i class="fas fa-camera"></i> 拍取發票自動帶入
           </button>
         </div>
@@ -273,6 +273,9 @@
   </div>
 
   <script>
+    // ----------------------------------------------------
+    // Firebase 設定與初始化 (你的原版金鑰)
+    // ----------------------------------------------------
     const firebaseConfig = {
       apiKey: "AIzaSyA6NFdF8zu_ymnHFB_jshwT94Fbadfm_uc",
       authDomain: "allmoneybackmyhome-c5ed9.firebaseapp.com",
@@ -285,66 +288,70 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.firestore();
 
+    // 🌟 這裡填上你的 Gemini Worker 網址
+    const OCR_WORKER_URL = "gemini-api-backend.abc552211.workers.dev"; 
+
+    // ----------------------------------------------------
+    // 全局變數
+    // ----------------------------------------------------
     let currentType = '支出';
     let currentView = 'account';
-    let currentSortOrder = 'desc'; // 🌟 新增：預設新到舊
+    let currentSortOrder = 'desc'; 
     let monthlyCache = {}; 
     let formOptions = null;
     let isPrivacyMode = false;
     let calcVal = '';
     let chartInstance = null;
-    let currentAccountHistory = [];
 
     function getFormattedDateStr(date) {
       let d = date || new Date();
       return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
     }
 
+    // 🌟 發票掃描與 AI 辨識串接
     async function handleInvoiceScan(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+      const file = event.target.files[0];
+      if (!file) return;
 
-  // 1. 將手機拍的照片轉成 Base64 字串
-  const reader = new FileReader();
-  reader.onload = async function(e) {
-    const base64Data = e.target.result.split(',')[1]; // 去除 Data URL 前綴
-    
-    document.getElementById('today-loading').style.display = 'block'; // 顯示讀取中
-    
-    try {
-      // 2. 發送給你的 Cloudflare Worker 後端
-      const response = await fetch('gemini-api-backend.abc552211.workers.dev', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64Data })
-      });
-      
-      const aiResult = await response.json(); // 收到乾淨的結構化資料 {}
-      
-      // 3. 100% 自動帶入前端記帳欄位！
-      document.getElementById('form-amount').value = aiResult.amount;
-      document.getElementById('form-note').value = aiResult.note;
-      
-      // 自動觸發大分類與小分類的晶片更新
-      document.getElementById('form-mainCat').value = aiResult.mainCat;
-      updateChipActive('form-mainCat', 'mainCat-chips');
-      updateSubCats();
-      
-      document.getElementById('form-subCat').value = aiResult.subCat;
-      updateChipActive('form-subCat', 'subCat-chips');
-      
-      toggleClearBtn();
-      alert('✨ AI 發票辨識成功！欄位已自動填妥。');
-      
-    } catch (err) {
-      alert('辨識失敗：' + err.message);
-    } finally {
-      document.getElementById('today-loading').style.display = 'none';
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const base64Data = e.target.result.split(',')[1]; 
+        const scanBtn = document.getElementById('scan-invoice-btn');
+        const originalText = scanBtn.innerHTML;
+        scanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AI 努力辨識中...';
+        
+        try {
+          const response = await fetch(OCR_WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageBase64: base64Data })
+          });
+          
+          const aiResult = await response.json(); 
+          
+          document.getElementById('form-amount').value = aiResult.amount;
+          document.getElementById('form-note').value = aiResult.note;
+          
+          document.getElementById('form-mainCat').value = aiResult.mainCat;
+          updateChipActive('form-mainCat', 'mainCat-chips');
+          updateSubCats();
+          
+          document.getElementById('form-subCat').value = aiResult.subCat;
+          updateChipActive('form-subCat', 'subCat-chips');
+          
+          toggleClearBtn();
+          alert('✨ AI 發票辨識成功！欄位已自動填妥。');
+          
+        } catch (err) {
+          alert('辨識失敗，請檢查 Worker 網址或稍後再試：' + err.message);
+        } finally {
+          scanBtn.innerHTML = originalText;
+        }
+      };
+      reader.readAsDataURL(file);
     }
-  };
-  reader.readAsDataURL(file);
-}
 
+    // 🌟 初始化畫面
     window.onload = function() {
       const realOptions = {
         months: ["2026/7","2026/6"],
@@ -477,7 +484,6 @@
         monthlyCache[month]['status'] = statusData;
         checkAndRender();
       }).catch(err => {
-        console.error(err);
         monthlyCache[month].completed = 4;
         checkAndRender();
       });
@@ -587,7 +593,6 @@
       } catch(e) { alert('調整失敗：' + e.message); }
     };
 
-    // 🌟 核心增強：全新排序模組（支援新舊、舊新互切）
     function renderCollapsibleEntries(entriesList, containerEl) {
       containerEl.innerHTML = '';
       if (!entriesList || entriesList.length === 0) {
@@ -602,7 +607,6 @@
         grouped[date].push(item);
       });
       
-      // 依全域 currentSortOrder 決定日期大標題的排序
       let sortedDates = Object.keys(grouped).sort((a, b) => {
         return currentSortOrder === 'desc' ? new Date(b) - new Date(a) : new Date(a) - new Date(b);
       });
@@ -663,7 +667,6 @@
       });
     }
 
-    // 🌟 新增功能：控制新舊與舊新切換切換
     function toggleSortOrder() {
       currentSortOrder = (currentSortOrder === 'desc') ? 'asc' : 'desc';
       const btn = document.getElementById('sort-btn');
@@ -681,8 +684,6 @@
       document.getElementById('view-acc').classList.toggle('active', v === 'account');
       document.getElementById('view-cat').classList.toggle('active', v === 'category');
       document.getElementById('view-date').classList.toggle('active', v === 'date');
-      
-      // 🌟 只有切換到「依日期」視圖時，才顯示新舊排序按鈕
       document.getElementById('sort-control-container').style.display = (v === 'date') ? 'flex' : 'none';
 
       const month = document.getElementById('month-select').value; 
@@ -695,13 +696,11 @@
       const container = document.getElementById('content-area'); container.innerHTML = '';
       if (!data) return;
       
-      // 🌟 核心邏輯修改：當視圖切換為「依日期」時，打平結構直接進入分組
       if (currentView === 'date' || Array.isArray(data)) {
         let flattenedArray = [];
         if (Array.isArray(data)) {
           flattenedArray = data;
         } else {
-          // 將原本依帳戶、依大類分類的多層結構打平為單一陣列
           for (let acc in data) {
             for (let main in data[acc]) {
               data[acc][main].details.forEach(d => {
@@ -823,6 +822,10 @@
     function updateMainCats() { const t = document.querySelector('input[name="type"]:checked').value; const s = document.getElementById('form-mainCat'); s.innerHTML = ''; const list = (t === '支出') ? formOptions.expenseOrder : (t === '收入' ? formOptions.incomeOrder : []); if(list) list.forEach(k => { let o = document.createElement('option'); o.value = k; o.text = k; s.add(o); }); syncChips('form-mainCat', 'mainCat-chips'); updateSubCats(); }
     function updateSubCats() { const m = document.getElementById('form-mainCat').value; const s = document.getElementById('form-subCat'); s.innerHTML = ''; if (formOptions.categories && formOptions.categories[m]) formOptions.categories[m].forEach(sub => { let o = document.createElement('option'); o.value = sub; o.text = sub; s.add(o); }); syncChips('form-subCat', 'subCat-chips'); }
     function showDetails(title, details) { document.getElementById('modal-title').textContent = title; const modalContent = document.getElementById('modal-content'); renderCollapsibleEntries(details, modalContent); document.getElementById('modal').style.display = 'flex'; }
+    function enterTodayView() { document.getElementById('home-screen').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; if(document.querySelector('.top-tabs')) document.querySelector('.top-tabs').style.display = 'none'; document.querySelectorAll('.page-container').forEach(el => el.classList.remove('active')); document.getElementById('page-today').classList.add('active'); document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active')); loadTodaySheetData(); }
+    function goHome() { document.getElementById('dashboard').style.display = 'none'; document.getElementById('home-screen').style.display = 'block'; }
+    function enterDashboard() { document.getElementById('home-screen').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; if(document.querySelector('.top-tabs')) document.querySelector('.top-tabs').style.display = 'flex'; loadMonths(); switchPage('flow'); }
+
     let xDown = null, yDown = null; function touchStart(evt) { xDown = evt.touches[0].clientX; yDown = evt.touches[0].clientY; }
     function touchMove(evt, el) { if (!xDown || !yDown) return; let xDiff = xDown - evt.touches[0].clientX; let yDiff = yDown - evt.touches[0].clientY; if (Math.abs(xDiff) > Math.abs(yDiff)) { if (xDiff > 50) { el.classList.add('swiped'); document.querySelectorAll('.detail-row.swiped').forEach(row => { if(row !== el) row.classList.remove('swiped'); }); } else if (xDiff < -50) { el.classList.remove('swiped'); } } }
     function touchEnd() { xDown = null; yDown = null; }
