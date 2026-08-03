@@ -306,23 +306,39 @@
     }
 
     window.onload = function() {
-      formOptions = {
-        months: ["2026/7","2026/6"],
-        accounts: ["現金","郵局","元大","中信","富邦","玉山","ipassMoney","玉山卡","悠遊卡","股票","元大虛擬帳"],
-        expenseOrder: ["生活支出","理財支出","其他支出"],
-        incomeOrder: ["工作收入","理財收入","其他收入"],
-        categories: {
-          "生活支出": ["食物","日用品","交通","保養","房租","水電","娛樂","學習","數位訂閱","醫療"],
-          "理財支出": ["職工勞健保","投資"],
-          "other支出": ["紅包","調整"], 
-          "其他支出": ["紅包","調整"],
-          "工作收入": ["墊上課程","兒童課程","器械課程","商業演出","打工兼職"],
-          "理財收入": ["利息","其他投資收入"],
-          "其他收入": ["中獎中彩","調整"]
-        }
-      };
-      initForm(formOptions);
-    };
+  // 自動動態計算本月與上月
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1; // getMonth() 回傳 0~11，需 +1
+
+  // 計算上個月與對應年份（處理 1 月的上月為去年 12 月）
+  let prevYear = currentYear;
+  let prevMonth = currentMonth - 1;
+  if (prevMonth === 0) {
+    prevMonth = 12;
+    prevYear -= 1;
+  }
+
+  const thisMonthStr = `${currentYear}/${currentMonth}`;
+  const lastMonthStr = `${prevYear}/${prevMonth}`;
+
+  formOptions = {
+    months: [thisMonthStr, lastMonthStr], // 動態產出本月與上月
+    accounts: ["現金","郵局","元大","中信","富邦","玉山","ipassMoney","玉山卡","悠遊卡","股票","元大虛擬帳"],
+    expenseOrder: ["生活支出","理財支出","其他支出"],
+    incomeOrder: ["工作收入","理財收入","其他收入"],
+    categories: {
+      "生活支出": ["食物","日用品","交通","保養","房租","水電","娛樂","學習","數位訂閱","醫療"],
+      "理財支出": ["職工勞健保","投資"],
+      "other支出": ["紅包","調整"], 
+      "其他支出": ["紅包","調整"],
+      "工作收入": ["墊上課程","兒童課程","器械課程","商業演出","打工兼職"],
+      "理財收入": ["利息","其他投資收入"],
+      "其他收入": ["中獎中彩","調整"]
+    }
+  };
+  initForm(formOptions);
+};
 
     function initForm(data) {
       const mSel = document.getElementById('form-month'); mSel.innerHTML = '';
