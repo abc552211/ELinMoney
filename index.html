@@ -32,7 +32,32 @@
     .quick-add-box { background: white; border-radius: 25px; padding: 20px; box-shadow: var(--shadow); text-align: left; margin-bottom: 30px; border: 2px solid var(--accent); }
     .box-title { font-size: 1.1rem; color: var(--primary-pink); margin-bottom: 15px; font-weight: bold; text-align: center; }
     .form-row { margin-bottom: 15px; } .form-row label { display: block; font-size: 0.85rem; color: #888; margin-bottom: 8px; }
-    .form-input, .form-select { width: 100%; padding: 10px; border-radius: 12px; border: 1px solid #ddd; font-family: inherit; box-sizing: border-box; outline: none; }
+    .form-input { width: 100%; padding: 10px; border-radius: 12px; border: 1px solid #ddd; font-family: inherit; box-sizing: border-box; outline: none; }
+    .form-select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background: #FFFFFF url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23C7CEEA' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 12px center;
+      padding: 8px 32px 8px 14px !important;
+      border-radius: 20px !important;
+      border: 1.5px solid var(--accent) !important;
+      color: #666;
+      font-size: 0.88rem;
+      font-weight: 500;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(199, 206, 234, 0.25);
+      transition: all 0.2s ease;
+    }
+    .form-select:hover {
+      border-color: var(--primary-pink) !important;
+      box-shadow: 0 3px 10px rgba(255, 183, 178, 0.35);
+    }
+    .form-select:focus {
+      border-color: var(--primary-pink) !important;
+      background-color: #fff;
+    }
     .radio-group { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
     .radio-label { flex: 1; text-align: center; padding: 8px; border-radius: 15px; border: 1px solid #eee; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
     .radio-input { display: none; }
@@ -153,7 +178,7 @@
           <label>月份歸屬</label>
           <div class="chip-group-wrapper">
             <div id="month-chips" style="display:flex; gap:8px;"></div>
-            <select id="form-month" style="display:none;" onchange="updateChipActive('form-month', 'month-chips')"></select>
+            <select id="form-month" class="form-select" style="display:none;" onchange="updateChipActive('form-month', 'month-chips')"></select>
           </div>
         </div>
         <button type="button" class="submit-btn" onclick="submitForm()">確認記帳</button>
@@ -189,7 +214,7 @@
         </div>
         <div class="chip-group-wrapper">
           <div id="dash-month-chips" style="display:flex; gap:8px;"></div>
-          <select id="month-select" style="display:none;" onchange="updateChipActive('month-select', 'dash-month-chips'); preloadAllData(this.value)"></select>
+          <select id="month-select" class="form-select" style="display:none;" onchange="updateChipActive('month-select', 'dash-month-chips'); preloadAllData(this.value)"></select>
         </div>
         
         <div class="view-toggle-container">
@@ -306,39 +331,31 @@
     }
 
     window.onload = function() {
-  // 自動動態計算本月與上月
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1; // getMonth() 回傳 0~11，需 +1
+      // 動態產出過去 12 個月的選單清單
+      const now = new Date();
+      let monthList = [];
+      for (let i = 0; i < 12; i++) {
+        let d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        monthList.push(`${d.getFullYear()}/${d.getMonth() + 1}`);
+      }
 
-  // 計算上個月與對應年份（處理 1 月的上月為去年 12 月）
-  let prevYear = currentYear;
-  let prevMonth = currentMonth - 1;
-  if (prevMonth === 0) {
-    prevMonth = 12;
-    prevYear -= 1;
-  }
-
-  const thisMonthStr = `${currentYear}/${currentMonth}`;
-  const lastMonthStr = `${prevYear}/${prevMonth}`;
-
-  formOptions = {
-    months: [thisMonthStr, lastMonthStr], // 動態產出本月與上月
-    accounts: ["現金","郵局","元大","中信","富邦","玉山","ipassMoney","玉山卡","悠遊卡","股票","元大虛擬帳"],
-    expenseOrder: ["生活支出","理財支出","其他支出"],
-    incomeOrder: ["工作收入","理財收入","其他收入"],
-    categories: {
-      "生活支出": ["食物","日用品","交通","保養","房租","水電","娛樂","學習","數位訂閱","醫療"],
-      "理財支出": ["職工勞健保","投資"],
-      "other支出": ["紅包","調整"], 
-      "其他支出": ["紅包","調整"],
-      "工作收入": ["墊上課程","兒童課程","器械課程","商業演出","打工兼職"],
-      "理財收入": ["利息","其他投資收入"],
-      "其他收入": ["中獎中彩","調整"]
-    }
-  };
-  initForm(formOptions);
-};
+      formOptions = {
+        months: monthList, // 提供完整歷史月份供下拉調閱
+        accounts: ["現金","郵局","元大","中信","富邦","玉山","ipassMoney","玉山卡","悠遊卡","股票","元大虛擬帳"],
+        expenseOrder: ["生活支出","理財支出","其他支出"],
+        incomeOrder: ["工作收入","理財收入","其他收入"],
+        categories: {
+          "生活支出": ["食物","日用品","交通","保養","房租","水電","娛樂","學習","數位訂閱","醫療"],
+          "理財支出": ["職工勞健保","投資"],
+          "other支出": ["紅包","調整"], 
+          "其他支出": ["紅包","調整"],
+          "工作收入": ["墊上課程","兒童課程","器械課程","商業演出","打工兼職"],
+          "理財收入": ["利息","其他投資收入"],
+          "其他收入": ["中獎中彩","調整"]
+        }
+      };
+      initForm(formOptions);
+    };
 
     function initForm(data) {
       const mSel = document.getElementById('form-month'); mSel.innerHTML = '';
@@ -349,7 +366,7 @@
         let o1 = document.createElement('option'); o1.value = a; o1.text = a; aSel.add(o1);
         let o2 = document.createElement('option'); o2.value = a; o2.text = a; aSel2.add(o2);
       });
-      syncChips('form-month', 'month-chips');
+      syncChips('form-month', 'month-chips', 2); // 記帳頁保留前2個快選，其餘由下拉選單選取
       syncChips('form-account', 'account-chips', 3);
       syncChips('form-account2', 'account2-chips', 3);
       updateMainCats();
@@ -358,8 +375,37 @@
     async function loadMonths() {
       const s = document.getElementById('month-select'); s.innerHTML = '';
       formOptions.months.forEach(m => { let o = document.createElement('option'); o.value = m; o.text = m; s.add(o); });
-      syncChips('month-select', 'dash-month-chips');
+      syncChips('month-select', 'dash-month-chips', 2); // 看板月曆保留前2個快選，其餘顯示下拉選單
       preloadAllData(s.value || formOptions.months[0]);
+    }
+
+    // 全時歷史資產計算（確保跨月不歸零）
+    let allTimeStatusCache = {};
+    async function calculateAllTimeStatus() {
+      try {
+        const snapshot = await db.collection('entries').get();
+        let statusObj = {};
+        if (formOptions && formOptions.accounts) {
+          formOptions.accounts.forEach(acc => { statusObj[acc] = { name: acc, balance: 0 }; });
+        }
+        snapshot.forEach(doc => {
+          let d = doc.data();
+          let amt = Number(d.amount) || 0;
+          if (d.type === '收入' && statusObj[d.account]) {
+            statusObj[d.account].balance += amt;
+          } else if (d.type === '支出' && statusObj[d.account]) {
+            statusObj[d.account].balance -= amt;
+          } else if (d.type === '轉帳') {
+            if (statusObj[d.account]) statusObj[d.account].balance -= amt;
+            if (statusObj[d.account2]) statusObj[d.account2].balance += amt;
+          } else if (d.type === '調整' && statusObj[d.account]) {
+            statusObj[d.account].balance += ((d.adjustSign || 1) * amt);
+          }
+        });
+        allTimeStatusCache = statusObj;
+      } catch (e) {
+        console.error("全資產統計失敗", e);
+      }
     }
 
     async function preloadAllData(month) {
@@ -375,8 +421,7 @@
         const snapshot = await db.collection('entries').where('month', '==', month).get();
         let docs = []; snapshot.forEach(doc => docs.push({ rowId: doc.id, ...doc.data() }));
 
-        // 將所有 docs 存入 cache 讓帳戶總覽能夠讀取所有紀錄（包含調整）
-        monthlyCache[month] = { completed: 0, stats: { '支出': 0, '收入': 0, '轉帳': 0 }, '支出': {}, '收入': {}, '轉帳': [], 'status': {}, allDocs: docs };
+        monthlyCache[month] = { completed: 0, stats: { '支出': 0, '收入': 0, '轉帳': 0 }, '支出': {}, '收入': {}, '轉帳': [], allDocs: docs };
 
         docs.forEach(d => {
           let amt = Number(d.amount) || 0;
@@ -394,27 +439,8 @@
           }
         });
 
-        if (formOptions && formOptions.accounts) {
-          formOptions.accounts.forEach(acc => { 
-            if (!monthlyCache[month]['status']) monthlyCache[month]['status'] = {};
-            monthlyCache[month]['status'][acc] = { name: acc, balance: 0 }; 
-          });
-        }
-        
-        docs.forEach(d => {
-          let amt = Number(d.amount) || 0;
-          if (d.type === '收入' && monthlyCache[month]['status'][d.account]) {
-            monthlyCache[month]['status'][d.account].balance += amt;
-          } else if (d.type === '支出' && monthlyCache[month]['status'][d.account]) {
-            monthlyCache[month]['status'][d.account].balance -= amt;
-          } else if (d.type === '轉帳') {
-            if (monthlyCache[month]['status'][d.account]) monthlyCache[month]['status'][d.account].balance -= amt;
-            if (monthlyCache[month]['status'][d.account2]) monthlyCache[month]['status'][d.account2].balance += amt;
-          } else if (d.type === '調整' && monthlyCache[month]['status'][d.account]) {
-            // 獨立的調整類型，只影響餘額不計入支出收入
-            monthlyCache[month]['status'][d.account].balance += (d.adjustSign * amt);
-          }
-        });
+        // 載入即時更新全時總資產
+        await calculateAllTimeStatus();
 
         document.getElementById('loading').style.display = 'none';
         updateStatsUI(month);
@@ -646,15 +672,16 @@
     }
 
     function renderStatusFromCache() {
-      const month = document.getElementById('month-select').value;
       const area = document.getElementById('status-area'); area.innerHTML = '';
-      if (!monthlyCache[month] || !monthlyCache[month]['status']) return;
-      const accounts = monthlyCache[month]['status']; let total = 0;
+      if (!allTimeStatusCache || Object.keys(allTimeStatusCache).length === 0) {
+        area.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px;">計算資產中...</div>';
+        return;
+      }
+      const accounts = allTimeStatusCache; let total = 0;
       for (let name in accounts) {
         let bal = accounts[name].balance; total += bal;
         let card = document.createElement('div'); card.className = 'status-card';
         card.style.cssText = 'background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); border-left: 5px solid var(--accent);';
-        // ✨ 已修改：加上帳戶名稱可點擊與修改餘額的獨立編輯小按鈕
         card.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <strong onclick="openAccountDetails('${name}')" style="cursor:pointer; flex:1; text-decoration:underline; text-decoration-color:var(--accent); text-underline-offset:4px;">${name}</strong>
@@ -732,9 +759,9 @@
         container.appendChild(btn); 
       }); 
       if (limit && options.length > limit) {
-        select.style.display = 'block';
+        select.style.display = 'inline-block';
         select.style.width = 'auto';
-        select.style.padding = '8px 12px';
+        select.style.margin = '0 0 0 4px';
       } else {
         select.style.display = 'none';
       }
