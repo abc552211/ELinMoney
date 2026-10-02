@@ -198,7 +198,7 @@
     <div class="top-tabs">
       <div class="tab-item active" onclick="switchPage('flow')">金流紀錄</div>
       <div class="tab-item" onclick="switchPage('status')">帳戶狀態</div>
-      <div class="tab-item" onclick="switchPage('charts')">統計圖表</div>
+      <div class="tab-item" onclick="switchPage('settings')">設定</div>
     </div>
     
     <div id="page-flow" class="page-container active">
@@ -235,9 +235,50 @@
       <div id="status-area"></div>
     </div>
 
-    <div id="page-charts" class="page-container">
-      <div class="controls"><div class="section-title">支出圓餅圖</div></div>
-      <div class="chart-container"><canvas id="myChart"></canvas></div>
+    <div id="page-settings" class="page-container">
+      <div class="controls">
+        <div class="section-title">帳戶與分類設定</div>
+        
+        <div style="background:white; border-radius:15px; padding:15px; border:1px solid #eee;">
+          <strong style="color:var(--text); font-size:0.95rem;"><i class="fas fa-wallet"></i> 新增帳戶</strong>
+          <div style="display:flex; gap:8px; margin-top:8px;">
+            <input type="text" id="new-account-name" class="form-input" placeholder="帳戶名稱 (如: 房貸/車貸/新戶)" style="flex:1;">
+            <button class="submit-btn" style="width:auto; padding:8px 16px; margin:0;" onclick="addNewAccount()">新增</button>
+          </div>
+        </div>
+
+        <div style="background:white; border-radius:15px; padding:15px; border:1px solid #eee;">
+          <strong style="color:var(--text); font-size:0.95rem;"><i class="fas fa-tags"></i> 新增大分類</strong>
+          <div style="display:flex; gap:8px; margin-top:8px;">
+            <select id="new-maincat-type" class="form-select" style="width:90px;">
+              <option value="支出">支出</option>
+              <option value="收入">收入</option>
+            </select>
+            <input type="text" id="new-maincat-name" class="form-input" placeholder="大分類名稱" style="flex:1;">
+            <button class="submit-btn" style="width:auto; padding:8px 16px; margin:0;" onclick="addNewMainCat()">新增</button>
+          </div>
+        </div>
+
+        <div style="background:white; border-radius:15px; padding:15px; border:1px solid #eee;">
+          <strong style="color:var(--text); font-size:0.95rem;"><i class="fas fa-tag"></i> 新增小分類</strong>
+          <div style="margin-top:8px; display:flex; flex-direction:column; gap:8px;">
+            <select id="target-maincat-select" class="form-select" style="width:100%;"></select>
+            <div style="display:flex; gap:8px;">
+              <input type="text" id="new-subcat-name" class="form-input" placeholder="小分類名稱" style="flex:1;">
+              <button class="submit-btn" style="width:auto; padding:8px 16px; margin:0;" onclick="addNewSubCat()">新增</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:white; border-radius:15px; padding:15px; border:1px solid #eee;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong style="color:var(--text); font-size:0.95rem;"><i class="fas fa-eye-slash"></i> 分類隱藏 / 顯示管理</strong>
+            <small style="color:#aaa;">點擊切換狀態</small>
+          </div>
+          <div id="category-visibility-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+
+      </div>
     </div>
     
     <div id="page-today" class="page-container">
@@ -247,7 +288,19 @@
     </div>
   </div>
 
-  <div id="modal" class="modal-overlay" onclick="closeModal(event)"><div class="modal"><div id="modal-title" style="font-weight:bold;margin-bottom:10px;">詳情</div><div id="modal-content"></div><button onclick="document.getElementById('modal').style.display='none'" style="margin-top:10px;padding:10px;border-radius:12px;background:#eee;border:none;cursor:pointer;">關閉</button></div></div>
+  <div id="modal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal">
+      <div id="modal-title" style="font-weight:bold;margin-bottom:10px;">詳情</div>
+      <div id="modal-search-box" style="display:none; margin-bottom:10px;">
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="modal-search-input" class="form-input" placeholder="🔍 搜尋備註、分類或金額..." oninput="handleModalSearch(this.value)" style="flex:1;">
+          <button type="button" id="load-all-history-btn" class="chip-btn" style="background:var(--accent); color:white; border:none; padding:8px 12px; font-size:0.8rem; display:none;" onclick="loadAllAccountHistory()">查全部歷史</button>
+        </div>
+      </div>
+      <div id="modal-content"></div>
+      <button onclick="document.getElementById('modal').style.display='none'" style="margin-top:10px;padding:10px;border-radius:12px;background:#eee;border:none;cursor:pointer;">關閉</button>
+    </div>
+  </div>
 
   <div id="calc-modal" class="modal-overlay" onclick="closeCalc(event)">
     <div class="modal" style="max-width: 320px;">
@@ -296,7 +349,9 @@
     const OCR_WORKER_URL = "https://gemini-api-backend.abc552211.workers.dev"; 
 
     let currentType = '支出'; let currentView = 'date'; let currentSortOrder = 'desc'; 
-    let monthlyCache = {}; let formOptions = null; let isPrivacyMode = false; let calcVal = ''; let chartInstance = null;
+    let monthlyCache = {}; let formOptions = null; let isPrivacyMode = false; let calcVal = '';
+    let currentModalFullDetails = []; let currentModalTitle = ''; let currentModalSubtitle = ''; let currentModalAccContext = null;
+    let hiddenCategories = { main: [], sub: {} };
 
     function getFormattedDateStr(date) {
       let d = date || new Date();
@@ -331,7 +386,6 @@
     }
 
     window.onload = function() {
-      // 動態產出過去 12 個月的選單清單
       const now = new Date();
       let monthList = [];
       for (let i = 0; i < 12; i++) {
@@ -339,8 +393,8 @@
         monthList.push(`${d.getFullYear()}/${d.getMonth() + 1}`);
       }
 
-      formOptions = {
-        months: monthList, // 提供完整歷史月份供下拉調閱
+      const defaultOptions = {
+        months: monthList,
         accounts: ["現金","郵局","元大","中信","富邦","玉山","ipassMoney","玉山卡","悠遊卡","股票","元大虛擬帳"],
         expenseOrder: ["生活支出","理財支出","其他支出"],
         incomeOrder: ["工作收入","理財收入","其他收入"],
@@ -354,8 +408,149 @@
           "其他收入": ["中獎中彩","調整"]
         }
       };
+
+      const saved = localStorage.getItem('elin_money_options');
+      if (saved) {
+        try {
+          formOptions = JSON.parse(saved);
+          formOptions.months = monthList;
+        } catch (e) { formOptions = defaultOptions; }
+      } else {
+        formOptions = defaultOptions;
+      }
+
+      const savedHidden = localStorage.getItem('elin_money_hidden_cats');
+      if (savedHidden) {
+        try { hiddenCategories = JSON.parse(savedHidden); } catch(e) { hiddenCategories = { main: [], sub: {} }; }
+      }
+      if (!hiddenCategories.main) hiddenCategories.main = [];
+      if (!hiddenCategories.sub) hiddenCategories.sub = {};
+
       initForm(formOptions);
+      populateSettingSelects();
+      renderVisibilityManager();
     };
+
+    function saveCustomOptions() {
+      localStorage.setItem('elin_money_options', JSON.stringify(formOptions));
+      initForm(formOptions);
+      populateSettingSelects();
+      renderVisibilityManager();
+    }
+
+    function saveHiddenCategories() {
+      localStorage.setItem('elin_money_hidden_cats', JSON.stringify(hiddenCategories));
+      updateMainCats();
+      renderVisibilityManager();
+    }
+
+    function toggleMainCatVisibility(mainName) {
+      const idx = hiddenCategories.main.indexOf(mainName);
+      if (idx > -1) hiddenCategories.main.splice(idx, 1);
+      else hiddenCategories.main.push(mainName);
+      saveHiddenCategories();
+    }
+
+    function toggleSubCatVisibility(mainName, subName) {
+      if (!hiddenCategories.sub[mainName]) hiddenCategories.sub[mainName] = [];
+      const idx = hiddenCategories.sub[mainName].indexOf(subName);
+      if (idx > -1) hiddenCategories.sub[mainName].splice(idx, 1);
+      else hiddenCategories.sub[mainName].push(subName);
+      saveHiddenCategories();
+    }
+
+    function renderVisibilityManager() {
+      const box = document.getElementById('category-visibility-list');
+      if (!box) return;
+      box.innerHTML = '';
+
+      const allMain = [...new Set([...(formOptions.expenseOrder || []), ...(formOptions.incomeOrder || [])])];
+      allMain.forEach(main => {
+        let isMainHidden = hiddenCategories.main.includes(main);
+        let block = document.createElement('div');
+        block.style.cssText = 'background:#FAF8F6; padding:10px; border-radius:12px; border:1px solid #eee;';
+
+        let mainHeader = document.createElement('div');
+        mainHeader.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;';
+        mainHeader.innerHTML = `
+          <span style="font-weight:bold; font-size:0.9rem; color:${isMainHidden ? '#aaa' : 'var(--text)'}; text-decoration:${isMainHidden ? 'line-through' : 'none'};">
+            ${main} ${isMainHidden ? '<small style="color:#ff6b6b;">(已隱藏大類)</small>' : ''}
+          </span>
+          <button type="button" class="chip-btn" style="padding:3px 10px; font-size:0.75rem; background:${isMainHidden ? '#ddd' : 'var(--primary-pink)'}; color:white; border:none;" onclick="toggleMainCatVisibility('${main}')">
+            ${isMainHidden ? '取消隱藏' : '隱藏此大類'}
+          </button>
+        `;
+        block.appendChild(mainHeader);
+
+        let subWrapper = document.createElement('div');
+        subWrapper.style.cssText = 'display:flex; flex-wrap:wrap; gap:6px; padding-left:5px;';
+        const subs = formOptions.categories[main] || [];
+        subs.forEach(sub => {
+          let isSubHidden = isMainHidden || (hiddenCategories.sub[main] && hiddenCategories.sub[main].includes(sub));
+          let subBtn = document.createElement('span');
+          subBtn.style.cssText = `font-size:0.8rem; padding:4px 8px; border-radius:10px; cursor:pointer; border:1px solid #ddd; background:${isSubHidden ? '#eee' : '#fff'}; color:${isSubHidden ? '#bbb' : '#555'}; text-decoration:${isSubHidden ? 'line-through' : 'none'};`;
+          subBtn.innerHTML = `${sub} <i class="fas ${isSubHidden ? 'fa-eye-slash' : 'fa-eye'}" style="font-size:0.7rem; margin-left:3px;"></i>`;
+          subBtn.onclick = () => toggleSubCatVisibility(main, sub);
+          subWrapper.appendChild(subBtn);
+        });
+        block.appendChild(subWrapper);
+        box.appendChild(block);
+      });
+    }
+
+    function populateSettingSelects() {
+      const targetSel = document.getElementById('target-maincat-select');
+      if (!targetSel) return;
+      targetSel.innerHTML = '';
+      const allMain = [...new Set([...(formOptions.expenseOrder || []), ...(formOptions.incomeOrder || [])])];
+      allMain.forEach(m => {
+        let opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        targetSel.appendChild(opt);
+      });
+    }
+
+    function addNewAccount() {
+      const input = document.getElementById('new-account-name');
+      const val = input.value.trim();
+      if (!val) return alert('請輸入帳戶名稱');
+      if (formOptions.accounts.includes(val)) return alert('帳戶已存在');
+      formOptions.accounts.push(val);
+      saveCustomOptions();
+      input.value = '';
+      calculateAllTimeStatus().then(renderStatusFromCache);
+      alert(`已成功新增帳戶「${val}」！`);
+    }
+
+    function addNewMainCat() {
+      const type = document.getElementById('new-maincat-type').value;
+      const input = document.getElementById('new-maincat-name');
+      const val = input.value.trim();
+      if (!val) return alert('請輸入大分類名稱');
+      const list = (type === '支出') ? formOptions.expenseOrder : formOptions.incomeOrder;
+      if (list.includes(val)) return alert('大分類已存在');
+      list.push(val);
+      if (!formOptions.categories[val]) formOptions.categories[val] = ["一般"];
+      saveCustomOptions();
+      input.value = '';
+      updateMainCats();
+      alert(`已成功為「${type}」新增大分類「${val}」！`);
+    }
+
+    function addNewSubCat() {
+      const mainCat = document.getElementById('target-maincat-select').value;
+      const input = document.getElementById('new-subcat-name');
+      const val = input.value.trim();
+      if (!val) return alert('請輸入小分類名稱');
+      if (!formOptions.categories[mainCat]) formOptions.categories[mainCat] = [];
+      if (formOptions.categories[mainCat].includes(val)) return alert('此小分類已存在');
+      formOptions.categories[mainCat].push(val);
+      saveCustomOptions();
+      input.value = '';
+      updateSubCats();
+      alert(`已成功在大分類「${mainCat}」下新增小分類「${val}」！`);
+    }
 
     function initForm(data) {
       const mSel = document.getElementById('form-month'); mSel.innerHTML = '';
@@ -366,7 +561,7 @@
         let o1 = document.createElement('option'); o1.value = a; o1.text = a; aSel.add(o1);
         let o2 = document.createElement('option'); o2.value = a; o2.text = a; aSel2.add(o2);
       });
-      syncChips('form-month', 'month-chips', 2); // 記帳頁保留前2個快選，其餘由下拉選單選取
+      syncChips('form-month', 'month-chips', 2);
       syncChips('form-account', 'account-chips', 3);
       syncChips('form-account2', 'account2-chips', 3);
       updateMainCats();
@@ -375,11 +570,10 @@
     async function loadMonths() {
       const s = document.getElementById('month-select'); s.innerHTML = '';
       formOptions.months.forEach(m => { let o = document.createElement('option'); o.value = m; o.text = m; s.add(o); });
-      syncChips('month-select', 'dash-month-chips', 2); // 看板月曆保留前2個快選，其餘顯示下拉選單
+      syncChips('month-select', 'dash-month-chips', 2);
       preloadAllData(s.value || formOptions.months[0]);
     }
 
-    // 全時歷史資產計算（確保跨月不歸零）
     let allTimeStatusCache = {};
     async function calculateAllTimeStatus() {
       try {
@@ -391,14 +585,17 @@
         snapshot.forEach(doc => {
           let d = doc.data();
           let amt = Number(d.amount) || 0;
-          if (d.type === '收入' && statusObj[d.account]) {
+          if (!statusObj[d.account]) statusObj[d.account] = { name: d.account, balance: 0 };
+          if (d.account2 && !statusObj[d.account2]) statusObj[d.account2] = { name: d.account2, balance: 0 };
+
+          if (d.type === '收入') {
             statusObj[d.account].balance += amt;
-          } else if (d.type === '支出' && statusObj[d.account]) {
+          } else if (d.type === '支出') {
             statusObj[d.account].balance -= amt;
           } else if (d.type === '轉帳') {
             if (statusObj[d.account]) statusObj[d.account].balance -= amt;
             if (statusObj[d.account2]) statusObj[d.account2].balance += amt;
-          } else if (d.type === '調整' && statusObj[d.account]) {
+          } else if (d.type === '調整') {
             statusObj[d.account].balance += ((d.adjustSign || 1) * amt);
           }
         });
@@ -426,7 +623,7 @@
         docs.forEach(d => {
           let amt = Number(d.amount) || 0;
           if (d.type === '轉帳') {
-            monthlyCache[month]['轉帳'].push({ from: d.account, to: d.account2, amount: amt, note: d.note, rowId: d.rowId, dateStr: d.dateStr || month, timestamp: d.timestamp });
+            monthlyCache[month]['轉帳'].push({ from: d.account, to: d.account2, amount: amt, note: d.note, rowId: d.rowId, dateStr: d.dateStr || month, timestamp: d.timestamp, month: d.month });
             monthlyCache[month].stats['轉帳'] = (monthlyCache[month].stats['轉帳'] || 0) + amt;
           } else if (d.type === '支出' || d.type === '收入') {
             if (!monthlyCache[month].stats[d.type]) monthlyCache[month].stats[d.type] = 0;
@@ -435,11 +632,10 @@
             if (!monthlyCache[month][d.type][d.account]) monthlyCache[month][d.type][d.account] = {};
             if (!monthlyCache[month][d.type][d.account][d.mainCat]) monthlyCache[month][d.type][d.account][d.mainCat] = { total: 0, details: [] };
             monthlyCache[month][d.type][d.account][d.mainCat].total += amt;
-            monthlyCache[month][d.type][d.account][d.mainCat].details.push({ sub: d.subCat, amt: amt, note: d.note, rowId: d.rowId, dateStr: d.dateStr || month, timestamp: d.timestamp });
+            monthlyCache[month][d.type][d.account][d.mainCat].details.push({ sub: d.subCat, amt: amt, note: d.note, rowId: d.rowId, dateStr: d.dateStr || month, timestamp: d.timestamp, month: d.month });
           }
         });
 
-        // 載入即時更新全時總資產
         await calculateAllTimeStatus();
 
         document.getElementById('loading').style.display = 'none';
@@ -447,7 +643,7 @@
         
         const activeTabEl = document.querySelector('.tab-item.active');
         if (activeTabEl && activeTabEl.textContent === '帳戶狀態') renderStatusFromCache();
-        else if (activeTabEl && activeTabEl.textContent === '統計圖表') loadChartData();
+        else if (activeTabEl && activeTabEl.textContent === '設定') { /* 設定頁無須更新圖表 */ }
         else renderCards(monthlyCache[month][currentType]);
 
       } catch (err) {
@@ -470,7 +666,6 @@
       const amtInput = document.getElementById('form-amount'); const amount = parseFloat(amtInput.value);
       if (!amtInput.value || isNaN(amount) || amount <= 0) { alert('請輸入正確的金額！'); return; }
       
-      // 獲取按鈕並鎖定，避免連續點擊誤觸
       const submitBtn = document.querySelector('.submit-btn');
       submitBtn.disabled = true;
       submitBtn.textContent = '處理中...';
@@ -490,7 +685,6 @@
       } catch(e) { 
         alert('失敗：' + e.message); 
       } finally {
-        // 處理完成後重新啟用按鈕
         submitBtn.disabled = false;
         submitBtn.textContent = '確認記帳';
       }
@@ -538,28 +732,6 @@
       } catch (e) { alert('刪除失敗'); }
     }
 
-    function loadChartData() {
-      const month = document.getElementById('month-select').value;
-      const data = monthlyCache[month]['支出'] || {};
-      let catTotals = {};
-      for (let acc in data) {
-        for (let main in data[acc]) {
-          catTotals[main] = (catTotals[main] || 0) + data[acc][main].total;
-        }
-      }
-      const labels = Object.keys(catTotals); const values = Object.values(catTotals);
-      if (chartInstance) chartInstance.destroy();
-      const ctx = document.getElementById('myChart').getContext('2d');
-      chartInstance = new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: labels,
-          datasets: [{ data: values, backgroundColor: ['#FFB7B2','#FFDAC1','#E2F0CB','#B5EAD7','#C7CEEA','#FF9AA2'] }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-    }
-
     function renderCards(data) {
       const container = document.getElementById('content-area'); container.innerHTML = '';
       if (!data) {
@@ -573,7 +745,7 @@
           for (let acc in data) {
             for (let main in data[acc]) {
               data[acc][main].details.forEach(d => {
-                arr.push({ account: acc, mainCat: main, subCat: d.sub, amount: d.amt, note: d.note, dateStr: d.dateStr, rowId: d.rowId, timestamp: d.timestamp });
+                arr.push({ account: acc, mainCat: main, subCat: d.sub, amount: d.amt, note: d.note, dateStr: d.dateStr, rowId: d.rowId, timestamp: d.timestamp, month: d.month });
               });
             }
           }
@@ -581,7 +753,6 @@
         
         arr.sort((a,b) => currentSortOrder === 'desc' ? new Date(b.dateStr) - new Date(a.dateStr) : new Date(a.dateStr) - new Date(b.dateStr));
         
-        // ✨ 已修改：依日期顯示時會依照日期分組
         let groupedByDate = {};
         arr.forEach(d => {
             if (!groupedByDate[d.dateStr]) groupedByDate[d.dateStr] = [];
@@ -595,18 +766,15 @@
             container.appendChild(dateHeader);
 
             groupedByDate[date].forEach(d => {
-              // 1. 建立外層滑動容器
               let containerDiv = document.createElement('div');
               containerDiv.className = 'detail-row-container';
               containerDiv.style.borderRadius = '12px';
 
-              // 2. 建立底層紅色刪除按鈕
               let delBtn = document.createElement('div');
               delBtn.style.cssText = 'position:absolute; right:0; top:0; width:70px; height:100%; background:#ff6b6b; color:white; display:flex; align-items:center; justify-content:center; border-radius:12px; cursor:pointer; z-index:1; font-size:1rem;';
               delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
               delBtn.onclick = () => deleteThisRow(d.rowId);
 
-              // 3. 建立上層內容列
               let r = document.createElement('div'); 
               r.className = 'detail-row';
               r.style.cssText = 'background:white; padding:12px; border-radius:12px; display:flex; justify-content:space-between; text-align:left; box-shadow: 0 1px 4px rgba(0,0,0,0.02); position:relative; z-index:2; transition:transform 0.2s ease; width:100%; box-sizing:border-box;';
@@ -618,20 +786,17 @@
                 <div style="font-weight:bold;align-self:center;">$${(d.amount||0).toLocaleString()}</div>
               `;
 
-              // 4. 綁定手勢滑動事件
               let startX = 0;
               r.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
               r.addEventListener('touchmove', (e) => {
                   let moveX = e.touches[0].clientX;
                   let diff = startX - moveX;
-                  if (diff > 60) r.classList.add('swiped');         // 左滑拉出刪除鍵
-                  else if (diff < -30) r.classList.remove('swiped');   // 右滑收回刪除鍵
+                  if (diff > 60) r.classList.add('swiped');
+                  else if (diff < -30) r.classList.remove('swiped');
               });
               
-              // 點擊已拉開的項目時自動收回
               r.addEventListener('click', () => { if(r.classList.contains('swiped')) r.classList.remove('swiped'); });
 
-              // 組裝結構並渲染
               containerDiv.appendChild(delBtn);
               containerDiv.appendChild(r);
               container.appendChild(containerDiv);
@@ -647,8 +812,7 @@
           for (let item in rData[title]) {
             let row = document.createElement('div'); row.className = 'cat-item';
             row.innerHTML = `<span>${item}</span><span>$${rData[title][item].total.toLocaleString()}</span>`;
-            // ✨ 已修改：為分類/帳戶卡片掛上點擊事件，彈出詳細明細
-            row.onclick = () => openDetailsModal(title, item, rData[title][item].details, null);
+            row.onclick = () => openDetailsModal(title, item, rData[title][item].details, null, false);
             card.appendChild(row);
           }
           container.appendChild(card);
@@ -682,11 +846,13 @@
         let bal = accounts[name].balance; total += bal;
         let card = document.createElement('div'); card.className = 'status-card';
         card.style.cssText = 'background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); border-left: 5px solid var(--accent);';
+        
+        let balColor = bal < 0 ? '#ff6b6b' : 'var(--text)';
         card.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <strong onclick="openAccountDetails('${name}')" style="cursor:pointer; flex:1; text-decoration:underline; text-decoration-color:var(--accent); text-underline-offset:4px;">${name}</strong>
             <div style="display:flex; align-items:center; gap: 8px;">
-              <div style="font-size:1.4rem;font-weight:bold;color:var(--text);">$${bal.toLocaleString()}</div>
+              <div style="font-size:1.4rem;font-weight:bold;color:${balColor};">$${bal.toLocaleString()}</div>
               <button onclick="adjustBalance('${name}', ${bal})" style="background:none; border:none; color:var(--text-light); cursor:pointer; font-size:1.1rem; padding:5px;"><i class="fas fa-edit"></i></button>
             </div>
           </div>
@@ -700,7 +866,10 @@
       document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
       if(page==='flow') document.querySelectorAll('.tab-item')[0].classList.add('active');
       if(page==='status') document.querySelectorAll('.tab-item')[1].classList.add('active');
-      if(page==='charts') document.querySelectorAll('.tab-item')[2].classList.add('active');
+      if(page==='settings') {
+        document.querySelectorAll('.tab-item')[2].classList.add('active');
+        renderVisibilityManager();
+      }
       document.querySelectorAll('.page-container').forEach(el => el.classList.remove('active'));
       document.getElementById('page-' + page).classList.add('active');
       
@@ -709,7 +878,6 @@
         if (monthlyCache[month] && monthlyCache[month][currentType]) renderCards(monthlyCache[month][currentType]);
       }
       else if (page === 'status') renderStatusFromCache();
-      else if (page === 'charts') loadChartData();
     }
 
     function setType(t) { 
@@ -788,9 +956,29 @@
       updateMainCats(); 
     }
 
-    function updateMainCats() { const t = document.querySelector('input[name="type"]:checked').value; const s = document.getElementById('form-mainCat'); s.innerHTML = ''; const list = t==='支出'?formOptions.expenseOrder:formOptions.incomeOrder; list.forEach(k => { let o = document.createElement('option'); o.value = k; o.text = k; s.add(o); }); syncChips('form-mainCat', 'mainCat-chips'); updateSubCats(); }
-    // ✨ 已修改：小分類限制只顯示前三個，其餘透過選單選擇
-    function updateSubCats() { const m = document.getElementById('form-mainCat').value; const s = document.getElementById('form-subCat'); s.innerHTML = ''; if(formOptions.categories[m]) formOptions.categories[m].forEach(sub => { let o = document.createElement('option'); o.value = sub; o.text = sub; s.add(o); }); syncChips('form-subCat', 'subCat-chips', 3); }
+    function updateMainCats() { 
+      const t = document.querySelector('input[name="type"]:checked').value; 
+      const s = document.getElementById('form-mainCat'); 
+      s.innerHTML = ''; 
+      const list = t==='支出'?formOptions.expenseOrder:formOptions.incomeOrder; 
+      const activeList = list.filter(k => !hiddenCategories.main.includes(k));
+      activeList.forEach(k => { let o = document.createElement('option'); o.value = k; o.text = k; s.add(o); }); 
+      syncChips('form-mainCat', 'mainCat-chips'); 
+      updateSubCats(); 
+    }
+
+    function updateSubCats() { 
+      const m = document.getElementById('form-mainCat').value; 
+      const s = document.getElementById('form-subCat'); 
+      s.innerHTML = ''; 
+      if(formOptions.categories[m]) {
+        const subList = formOptions.categories[m];
+        const hiddenForThisMain = hiddenCategories.sub[m] || [];
+        const activeSubs = subList.filter(sub => !hiddenForThisMain.includes(sub));
+        activeSubs.forEach(sub => { let o = document.createElement('option'); o.value = sub; o.text = sub; s.add(o); }); 
+      }
+      syncChips('form-subCat', 'subCat-chips', 3); 
+    }
     
     function enterTodayView() { 
       document.getElementById('home-screen').style.display = 'none'; 
@@ -814,7 +1002,6 @@
       isPrivacyMode = !isPrivacyMode; 
       document.getElementById('content-area').classList.toggle('data-hidden', isPrivacyMode); 
       document.getElementById('status-area').classList.toggle('data-hidden', isPrivacyMode); 
-      // 同步隱藏上方區塊的所有金額數字
       document.getElementById('balance-val').classList.toggle('data-hidden', isPrivacyMode);
       document.getElementById('val-exp').classList.toggle('data-hidden', isPrivacyMode);
       document.getElementById('val-inc').classList.toggle('data-hidden', isPrivacyMode);
@@ -824,77 +1011,201 @@
     function closeModal(e) { if(e.target.id==='modal') e.target.style.display='none'; }
 
     // ==========================================
-    // ✨ 全新補充區：處理帳戶與金流詳細明細＆餘額調整
+    // 帳戶與明細展示（支援 3 個月調閱、全部歷史擴充調閱、模糊搜尋）
     // ==========================================
-    function openDetailsModal(title, subtitle, details, accContext) {
-        document.getElementById('modal-title').textContent = title + ' - ' + subtitle;
-        let content = document.getElementById('modal-content'); content.innerHTML = '';
-        
-        let grouped = {};
-        details.forEach(d => {
-            let date = d.dateStr || '未知日期';
-            if (!grouped[date]) grouped[date] = [];
-            grouped[date].push(d);
-        });
-        
-        let sortedDates = Object.keys(grouped).sort((a,b) => new Date(b) - new Date(a));
-        
-        if(sortedDates.length === 0) {
-            content.innerHTML = '<div style="text-align:center;color:#999;padding:20px;">無明細資料</div>';
-        } else {
-            sortedDates.forEach(date => {
-                let dateGroup = document.createElement('div');
-                dateGroup.style.marginBottom = '15px';
-                dateGroup.innerHTML = `<div style="font-weight:bold; color:var(--text-blue); margin-bottom:8px; border-bottom:2px solid #eee; padding-bottom:4px;">${date}</div>`;
-                
-                grouped[date].sort((a,b) => (b.timestamp||0) - (a.timestamp||0)).forEach(d => {
-                    let row = document.createElement('div');
-                    row.style.cssText = 'display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed #eee; font-size:0.9rem;';
-                    
-                    let amtStr = d.amount || d.amt; let color = '#5D5C61'; let prefix = ''; let subText = d.subCat || d.sub || '';
-                    
-                    if (d.type === '調整') {
-                        amtStr = (d.adjustSign > 0 ? '+' : '') + (d.adjustSign * d.amount); color = '#aaa';
-                        prefix = '<span style="background:#eee;padding:2px 6px;border-radius:4px;font-size:0.75rem;margin-right:5px;">調整</span>';
-                    } else if (d.type === '轉帳') {
-                        if (accContext === d.account) { amtStr = '-' + d.amount; color = 'var(--primary-pink)'; }
-                        else if (accContext === d.account2) { amtStr = '+' + d.amount; color = 'var(--primary-green)'; }
-                        else { amtStr = d.amount; color = 'var(--primary-blue)'; }
-                        prefix = '<span style="background:var(--primary-blue);color:white;padding:2px 6px;border-radius:4px;font-size:0.75rem;margin-right:5px;">轉帳</span>';
-                        subText = `${d.from || d.account} ➔ ${d.to || d.account2}`;
-                    } else {
-                        let isExp = d.type === '支出' || (!d.type && currentType === '支出');
-                        let isInc = d.type === '收入' || (!d.type && currentType === '收入');
-                        if (isExp) { amtStr = '-' + amtStr; color = 'var(--primary-pink)'; }
-                        if (isInc) { amtStr = '+' + amtStr; color = 'var(--primary-green)'; }
-                    }
-                    
-                    row.innerHTML = `
-                        <div style="flex:1; padding-right:10px;">
-                            <div style="display:flex; align-items:center; margin-bottom:4px;">${prefix}<strong style="color:#555;">${d.mainCat || d.type || title}</strong><span style="color:#888; margin-left:5px;">${subText}</span></div>
-                            ${d.note ? `<div style="font-size:0.8rem; color:#aaa;">${d.note}</div>` : ''}
-                        </div>
-                        <div style="font-weight:bold; color:${color}; align-self:center; white-space:nowrap;">
-                            ${typeof amtStr === 'number' ? '$'+amtStr.toLocaleString() : amtStr.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                        </div>
-                    `;
-                    dateGroup.appendChild(row);
-                });
-                content.appendChild(dateGroup);
-            });
+    function openDetailsModal(title, subtitle, details, accContext, enableSearch = true, showAllHistoryBtn = false) {
+      currentModalTitle = title;
+      currentModalSubtitle = subtitle;
+      currentModalFullDetails = details || [];
+      currentModalAccContext = accContext;
+
+      document.getElementById('modal-title').textContent = title + ' - ' + subtitle;
+      const searchBox = document.getElementById('modal-search-box');
+      const searchInput = document.getElementById('modal-search-input');
+      const allHistBtn = document.getElementById('load-all-history-btn');
+      
+      if (enableSearch) {
+        searchBox.style.display = 'block';
+        searchInput.value = '';
+        if (showAllHistoryBtn && allHistBtn) {
+          allHistBtn.style.display = 'inline-block';
+          allHistBtn.textContent = '查全部歷史';
+          allHistBtn.disabled = false;
+        } else if (allHistBtn) {
+          allHistBtn.style.display = 'none';
         }
-        document.getElementById('modal').style.display = 'flex';
+      } else {
+        searchBox.style.display = 'none';
+      }
+
+      renderModalDetailsList(currentModalFullDetails, accContext, title);
+      document.getElementById('modal').style.display = 'flex';
     }
 
-    function openAccountDetails(accName) {
-        const month = document.getElementById('month-select').value;
-        const allDocs = monthlyCache[month].allDocs || [];
+    async function loadAllAccountHistory() {
+      const btn = document.getElementById('load-all-history-btn');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 讀取全部中...';
+      }
+      try {
+        const snapshot = await db.collection('entries').get();
+        let allDocs = [];
+        snapshot.forEach(doc => allDocs.push({ rowId: doc.id, ...doc.data() }));
+
+        let accDocs = allDocs.filter(d => d.account === currentModalAccContext || (d.type === '轉帳' && d.account2 === currentModalAccContext));
+        currentModalFullDetails = accDocs;
+        document.getElementById('modal-title').textContent = `帳戶明細 (全部歷史) - ${currentModalAccContext}`;
+        if (btn) btn.style.display = 'none';
+        handleModalSearch(document.getElementById('modal-search-input').value || '');
+      } catch (err) {
+        alert('載入全部歷史失敗：' + err.message);
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '查全部歷史';
+        }
+      }
+    }
+
+    function handleModalSearch(keyword) {
+      keyword = keyword.trim().toLowerCase();
+      if (!keyword) {
+        renderModalDetailsList(currentModalFullDetails, currentModalAccContext, currentModalTitle);
+        return;
+      }
+
+      const filtered = currentModalFullDetails.filter(d => {
+        const text = [
+          d.dateStr,
+          d.month,
+          d.note,
+          d.mainCat,
+          d.subCat,
+          d.sub,
+          d.account,
+          d.account2,
+          d.from,
+          d.to,
+          d.amount,
+          d.amt,
+          d.type
+        ].filter(Boolean).join(' ').toLowerCase();
+        return text.includes(keyword);
+      });
+
+      renderModalDetailsList(filtered, currentModalAccContext, currentModalTitle);
+    }
+
+    function renderModalDetailsList(details, accContext, title) {
+      let content = document.getElementById('modal-content'); content.innerHTML = '';
+      
+      let grouped = {};
+      details.forEach(d => {
+        let m = d.month;
+        if (!m && d.dateStr) {
+          let parts = d.dateStr.split('/');
+          if (parts.length >= 2) m = parts[0] + '/' + parts[1];
+        }
+        m = m || '其他月份';
+        if (!grouped[m]) grouped[m] = {};
+        
+        let date = d.dateStr || m;
+        if (!grouped[m][date]) grouped[m][date] = [];
+        grouped[m][date].push(d);
+      });
+      
+      let sortedMonths = Object.keys(grouped).sort((a,b) => {
+        let da = new Date(a.replace('/', '-') + '-01');
+        let db = new Date(b.replace('/', '-') + '-01');
+        return db - da;
+      });
+      
+      if(sortedMonths.length === 0) {
+        content.innerHTML = '<div style="text-align:center;color:#999;padding:20px;">無符合的明細紀錄</div>';
+        return;
+      }
+
+      sortedMonths.forEach(mKey => {
+        let mHeader = document.createElement('div');
+        mHeader.style.cssText = 'background:var(--accent); color:white; padding:4px 10px; border-radius:8px; font-size:0.85rem; font-weight:bold; margin:10px 0 6px 0; display:inline-block;';
+        mHeader.textContent = mKey;
+        content.appendChild(mHeader);
+
+        let dateMap = grouped[mKey];
+        let sortedDates = Object.keys(dateMap).sort((a,b) => new Date(b) - new Date(a));
+
+        sortedDates.forEach((date, idx) => {
+          let dateGroup = document.createElement('div');
+          let bgColor = idx % 2 === 0 ? '#FAF8F6' : '#FFFFFF';
+          dateGroup.style.cssText = `background: ${bgColor}; padding: 10px 12px; border-radius: 14px; margin-bottom: 12px; border: 1px solid #F0ECE9;`;
+          dateGroup.innerHTML = `<div style="font-weight:bold; color:var(--text-blue); margin-bottom:6px; border-bottom:1.5px solid #EBE5E1; padding-bottom:3px; font-size:0.85rem;"><i class="far fa-calendar-alt"></i> ${date}</div>`;
+          
+          dateMap[date].sort((a,b) => (b.timestamp||0) - (a.timestamp||0)).forEach(d => {
+            let row = document.createElement('div');
+            row.style.cssText = 'display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed #eee; font-size:0.9rem;';
+            
+            let amtStr = d.amount || d.amt; let color = '#5D5C61'; let prefix = ''; let subText = d.subCat || d.sub || '';
+            
+            if (d.type === '調整') {
+              amtStr = (d.adjustSign > 0 ? '+' : '') + (d.adjustSign * d.amount); color = '#aaa';
+              prefix = '<span style="background:#eee;padding:2px 6px;border-radius:4px;font-size:0.75rem;margin-right:5px;">調整</span>';
+            } else if (d.type === '轉帳') {
+              if (accContext === d.account) { amtStr = '-' + d.amount; color = 'var(--primary-pink)'; }
+              else if (accContext === d.account2) { amtStr = '+' + d.amount; color = 'var(--primary-green)'; }
+              else { amtStr = d.amount; color = 'var(--primary-blue)'; }
+              prefix = '<span style="background:var(--primary-blue);color:white;padding:2px 6px;border-radius:4px;font-size:0.75rem;margin-right:5px;">轉帳</span>';
+              subText = `${d.from || d.account} ➔ ${d.to || d.account2}`;
+            } else {
+              let isExp = d.type === '支出' || (!d.type && currentType === '支出');
+              let isInc = d.type === '收入' || (!d.type && currentType === '收入');
+              if (isExp) { amtStr = '-' + amtStr; color = 'var(--primary-pink)'; }
+              if (isInc) { amtStr = '+' + amtStr; color = 'var(--primary-green)'; }
+            }
+            
+            row.innerHTML = `
+              <div style="flex:1; padding-right:10px;">
+                <div style="display:flex; align-items:center; margin-bottom:4px;">${prefix}<strong style="color:#555;">${d.mainCat || d.type || title}</strong><span style="color:#888; margin-left:5px;">${subText}</span></div>
+                ${d.note ? `<div style="font-size:0.8rem; color:#aaa;">${d.note}</div>` : ''}
+              </div>
+              <div style="font-weight:bold; color:${color}; align-self:center; white-space:nowrap;">
+                ${typeof amtStr === 'number' ? '$'+amtStr.toLocaleString() : amtStr.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+              </div>
+            `;
+            dateGroup.appendChild(row);
+          });
+          content.appendChild(dateGroup);
+        });
+      });
+    }
+
+    async function openAccountDetails(accName) {
+      document.getElementById('modal-title').textContent = `帳戶明細 - ${accName} (載入近3個月紀錄...)`;
+      document.getElementById('modal-search-box').style.display = 'none';
+      document.getElementById('modal-content').innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;"><i class="fas fa-spinner fa-spin"></i> 正在調閱帳戶紀錄...</div>';
+      document.getElementById('modal').style.display = 'flex';
+
+      try {
+        const now = new Date();
+        let targetMonths = [];
+        for (let i = 0; i < 3; i++) {
+          let d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          targetMonths.push(`${d.getFullYear()}/${d.getMonth() + 1}`);
+        }
+
+        const snapshot = await db.collection('entries').where('month', 'in', targetMonths).get();
+        let allDocs = [];
+        snapshot.forEach(doc => allDocs.push({ rowId: doc.id, ...doc.data() }));
+
         let accDocs = allDocs.filter(d => d.account === accName || (d.type === '轉帳' && d.account2 === accName));
-        openDetailsModal('帳戶明細', accName, accDocs, accName);
+        openDetailsModal('帳戶明細 (近3個月)', accName, accDocs, accName, true, true);
+      } catch (err) {
+        console.error("帳戶明細載入失敗", err);
+        document.getElementById('modal-content').innerHTML = '<div style="text-align:center;color:red;padding:20px;">載入失敗，請重試</div>';
+      }
     }
 
     async function adjustBalance(acc, curBal) {
-      let input = prompt(`請輸入「${acc}」的最新正確餘額：`, curBal);
+      let input = prompt(`請輸入「${acc}」的最新正確餘額（可輸入負數，如貸款填寫 -500000）：`, curBal);
       if (input === null || input.trim() === "") return;
       let newBal = Number(input);
       if (isNaN(newBal)) return alert('請輸入有效數字');
@@ -905,7 +1216,7 @@
         type: '調整',
         amount: Math.abs(diff),
         account: acc,
-        note: diff > 0 ? '帳戶餘額盤盈' : '帳戶餘額盤虧',
+        note: diff > 0 ? '帳戶餘額盤盈' : '帳戶餘額盤虧(含負債調整)',
         month: document.getElementById('month-select').value || (new Date().getFullYear()+'/'+(new Date().getMonth()+1)),
         timestamp: Date.now(),
         dateStr: getFormattedDateStr(),
@@ -915,7 +1226,8 @@
       try {
         await db.collection('entries').add(formObj);
         alert('修改餘額成功！此調整不計入總支出與收入中。');
-        preloadAllData(formObj.month);
+        await calculateAllTimeStatus();
+        renderStatusFromCache();
       } catch(e) {
         alert('調整失敗：'+e.message);
       }
