@@ -231,7 +231,17 @@
     </div>
 
     <div id="page-status" class="page-container">
-      <div class="controls"><div class="top-row"><div class="section-title">帳戶狀態</div><div class="balance-badge"><span class="balance-label">總資產</span><span class="balance-amount" id="total-assets-val">$0</span></div></div></div>
+      <div class="controls">
+        <div class="top-row">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="section-title">帳戶狀態</div>
+            <button type="button" onclick="openGlobalSearchModal()" style="background:none; border:none; color:var(--text-blue); font-size:1.1rem; cursor:pointer; padding:4px;" title="搜尋交易紀錄">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <div class="balance-badge"><span class="balance-label">總資產</span><span class="balance-amount" id="total-assets-val">$0</span></div>
+        </div>
+      </div>
       <div id="status-area"></div>
     </div>
 
@@ -288,17 +298,42 @@
     </div>
   </div>
 
+  <!-- 單純明細彈窗（帳戶點進去不再有搜尋框） -->
   <div id="modal" class="modal-overlay" onclick="closeModal(event)">
     <div class="modal">
       <div id="modal-title" style="font-weight:bold;margin-bottom:10px;">詳情</div>
-      <div id="modal-search-box" style="display:none; margin-bottom:10px;">
-        <div style="display:flex; gap:8px;">
-          <input type="text" id="modal-search-input" class="form-input" placeholder="🔍 搜尋備註、分類或金額..." oninput="handleModalSearch(this.value)" style="flex:1;">
-          <button type="button" id="load-all-history-btn" class="chip-btn" style="background:var(--accent); color:white; border:none; padding:8px 12px; font-size:0.8rem; display:none;" onclick="loadAllAccountHistory()">查全部歷史</button>
-        </div>
-      </div>
       <div id="modal-content"></div>
       <button onclick="document.getElementById('modal').style.display='none'" style="margin-top:10px;padding:10px;border-radius:12px;background:#eee;border:none;cursor:pointer;">關閉</button>
+    </div>
+  </div>
+
+  <!-- 獨立全局搜尋彈窗 -->
+  <div id="search-modal" class="modal-overlay" onclick="closeSearchModal(event)">
+    <div class="modal" style="max-height:85vh;">
+      <div style="font-weight:bold; margin-bottom:12px; color:var(--text); font-size:1.1rem; display:flex; align-items:center; gap:6px;">
+        <i class="fas fa-search" style="color:var(--text-blue);"></i> 查詢交易紀錄
+      </div>
+      
+      <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+        <div style="display:flex; gap:8px;">
+          <select id="global-search-account-select" class="form-select" style="flex:1;">
+            <option value="ALL">🌐 全戶紀錄</option>
+          </select>
+        </div>
+        
+        <div style="display:flex; gap:8px; align-items:center;">
+          <div style="position:relative; flex:1; display:flex; align-items:center;">
+            <input type="text" id="global-search-input" class="form-input" placeholder="支援中間%隔開多條件" style="padding-right:32px;">
+            <span onclick="clearGlobalSearchInput()" style="position:absolute; right:10px; color:#aaa; cursor:pointer; font-size:1.1rem; line-height:1; user-select:none;">×</span>
+          </div>
+          <button type="button" class="submit-btn" style="width:auto; padding:10px 18px; margin:0;" onclick="executeGlobalSearch()">搜尋</button>
+        </div>
+      </div>
+      
+      <div id="global-search-content" style="overflow-y:auto; flex-grow:1; max-height:50vh;">
+        <div style="text-align:center; color:#aaa; padding:25px;">請輸入關鍵字後按下「搜尋」</div>
+      </div>
+      <button onclick="document.getElementById('search-modal').style.display='none'" style="margin-top:10px;padding:10px;border-radius:12px;background:#eee;border:none;cursor:pointer;">關閉</button>
     </div>
   </div>
 
@@ -1011,93 +1046,116 @@
     function closeModal(e) { if(e.target.id==='modal') e.target.style.display='none'; }
 
     // ==========================================
-    // 帳戶與明細展示（支援 3 個月調閱、全部歷史擴充調閱、模糊搜尋）
+    // 帳戶與明細展示（無搜尋框，乾淨展示近3個月明細）
     // ==========================================
-    function openDetailsModal(title, subtitle, details, accContext, enableSearch = true, showAllHistoryBtn = false) {
-      currentModalTitle = title;
-      currentModalSubtitle = subtitle;
-      currentModalFullDetails = details || [];
-      currentModalAccContext = accContext;
-
+    function openDetailsModal(title, subtitle, details, accContext) {
       document.getElementById('modal-title').textContent = title + ' - ' + subtitle;
-      const searchBox = document.getElementById('modal-search-box');
-      const searchInput = document.getElementById('modal-search-input');
-      const allHistBtn = document.getElementById('load-all-history-btn');
-      
-      if (enableSearch) {
-        searchBox.style.display = 'block';
-        searchInput.value = '';
-        if (showAllHistoryBtn && allHistBtn) {
-          allHistBtn.style.display = 'inline-block';
-          allHistBtn.textContent = '查全部歷史';
-          allHistBtn.disabled = false;
-        } else if (allHistBtn) {
-          allHistBtn.style.display = 'none';
-        }
-      } else {
-        searchBox.style.display = 'none';
-      }
-
-      renderModalDetailsList(currentModalFullDetails, accContext, title);
+      renderRecordsToContainer(document.getElementById('modal-content'), details || [], accContext, title);
       document.getElementById('modal').style.display = 'flex';
     }
 
-    async function loadAllAccountHistory() {
-      const btn = document.getElementById('load-all-history-btn');
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 讀取全部中...';
-      }
+    async function openAccountDetails(accName) {
+      document.getElementById('modal-title').textContent = `帳戶明細 - ${accName}`;
+      document.getElementById('modal-content').innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;"><i class="fas fa-spinner fa-spin"></i> 正在調閱近3個月紀錄...</div>';
+      document.getElementById('modal').style.display = 'flex';
+
       try {
-        const snapshot = await db.collection('entries').get();
+        const now = new Date();
+        let targetMonths = [];
+        for (let i = 0; i < 3; i++) {
+          let d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          targetMonths.push(`${d.getFullYear()}/${d.getMonth() + 1}`);
+        }
+
+        const snapshot = await db.collection('entries').where('month', 'in', targetMonths).get();
         let allDocs = [];
         snapshot.forEach(doc => allDocs.push({ rowId: doc.id, ...doc.data() }));
 
-        let accDocs = allDocs.filter(d => d.account === currentModalAccContext || (d.type === '轉帳' && d.account2 === currentModalAccContext));
-        currentModalFullDetails = accDocs;
-        document.getElementById('modal-title').textContent = `帳戶明細 (全部歷史) - ${currentModalAccContext}`;
-        if (btn) btn.style.display = 'none';
-        handleModalSearch(document.getElementById('modal-search-input').value || '');
+        let accDocs = allDocs.filter(d => d.account === accName || (d.type === '轉帳' && d.account2 === accName));
+        openDetailsModal('帳戶明細 (近3個月)', accName, accDocs, accName);
       } catch (err) {
-        alert('載入全部歷史失敗：' + err.message);
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = '查全部歷史';
+        console.error("帳戶明細載入失敗", err);
+        document.getElementById('modal-content').innerHTML = '<div style="text-align:center;color:red;padding:20px;">載入失敗，請重試</div>';
+      }
+    }
+
+    // ==========================================
+    // 全域放大鏡搜尋中心
+    // ==========================================
+    function closeSearchModal(e) {
+      if (e.target.id === 'search-modal') document.getElementById('search-modal').style.display = 'none';
+    }
+
+    function openGlobalSearchModal() {
+      const sel = document.getElementById('global-search-account-select');
+      sel.innerHTML = '<option value="ALL">🌐 全戶紀錄</option>';
+      if (formOptions && formOptions.accounts) {
+        formOptions.accounts.forEach(acc => {
+          let opt = document.createElement('option');
+          opt.value = acc;
+          opt.textContent = acc;
+          sel.appendChild(opt);
+        });
+      }
+      document.getElementById('global-search-content').innerHTML = '<div style="text-align:center; color:#aaa; padding:25px;">請輸入關鍵字後按下「搜尋」</div>';
+      document.getElementById('search-modal').style.display = 'flex';
+    }
+
+    function clearGlobalSearchInput() {
+      const input = document.getElementById('global-search-input');
+      input.value = '';
+      input.focus();
+    }
+
+    async function executeGlobalSearch() {
+      const keyword = (document.getElementById('global-search-input').value || '').trim().toLowerCase();
+      const targetAcc = document.getElementById('global-search-account-select').value;
+      const content = document.getElementById('global-search-content');
+      
+      content.innerHTML = '<div style="text-align:center; padding:25px; color:#aaa;"><i class="fas fa-spinner fa-spin"></i> 搜尋歷史紀錄中...</div>';
+
+      try {
+        const snapshot = await db.collection('entries').get();
+        let list = [];
+        snapshot.forEach(doc => list.push({ rowId: doc.id, ...doc.data() }));
+
+        if (targetAcc !== 'ALL') {
+          list = list.filter(d => d.account === targetAcc || (d.type === '轉帳' && d.account2 === targetAcc));
         }
+
+        if (keyword) {
+          const terms = keyword.split('%').map(t => t.trim()).filter(Boolean);
+          list = list.filter(d => {
+            const text = [
+              d.dateStr,
+              d.month,
+              d.note,
+              d.mainCat,
+              d.subCat,
+              d.account,
+              d.account2,
+              d.amount,
+              d.type
+            ].filter(Boolean).join(' ').toLowerCase();
+            return terms.every(term => text.includes(term));
+          });
+        }
+
+        if (list.length === 0) {
+          content.innerHTML = '<div style="text-align:center; color:#999; padding:25px;">查無相符紀錄</div>';
+          return;
+        }
+
+        renderRecordsToContainer(content, list, targetAcc === 'ALL' ? null : targetAcc, '搜尋結果');
+      } catch (err) {
+        console.error("全局搜尋失敗", err);
+        content.innerHTML = '<div style="text-align:center; color:red; padding:25px;">搜尋失敗：' + err.message + '</div>';
       }
     }
 
-    function handleModalSearch(keyword) {
-      keyword = keyword.trim().toLowerCase();
-      if (!keyword) {
-        renderModalDetailsList(currentModalFullDetails, currentModalAccContext, currentModalTitle);
-        return;
-      }
-
-      const filtered = currentModalFullDetails.filter(d => {
-        const text = [
-          d.dateStr,
-          d.month,
-          d.note,
-          d.mainCat,
-          d.subCat,
-          d.sub,
-          d.account,
-          d.account2,
-          d.from,
-          d.to,
-          d.amount,
-          d.amt,
-          d.type
-        ].filter(Boolean).join(' ').toLowerCase();
-        return text.includes(keyword);
-      });
-
-      renderModalDetailsList(filtered, currentModalAccContext, currentModalTitle);
-    }
-
-    function renderModalDetailsList(details, accContext, title) {
-      let content = document.getElementById('modal-content'); content.innerHTML = '';
+    // 統一共用的舒適交替底色記錄渲染函式
+    function renderRecordsToContainer(container, details, accContext, title) {
+      container.innerHTML = '';
       
       let grouped = {};
       details.forEach(d => {
@@ -1121,7 +1179,7 @@
       });
       
       if(sortedMonths.length === 0) {
-        content.innerHTML = '<div style="text-align:center;color:#999;padding:20px;">無符合的明細紀錄</div>';
+        container.innerHTML = '<div style="text-align:center;color:#999;padding:20px;">無紀錄</div>';
         return;
       }
 
@@ -1129,7 +1187,7 @@
         let mHeader = document.createElement('div');
         mHeader.style.cssText = 'background:var(--accent); color:white; padding:4px 10px; border-radius:8px; font-size:0.85rem; font-weight:bold; margin:10px 0 6px 0; display:inline-block;';
         mHeader.textContent = mKey;
-        content.appendChild(mHeader);
+        container.appendChild(mHeader);
 
         let dateMap = grouped[mKey];
         let sortedDates = Object.keys(dateMap).sort((a,b) => new Date(b) - new Date(a));
@@ -1145,6 +1203,7 @@
             row.style.cssText = 'display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed #eee; font-size:0.9rem;';
             
             let amtStr = d.amount || d.amt; let color = '#5D5C61'; let prefix = ''; let subText = d.subCat || d.sub || '';
+            let accInfo = (!accContext) ? `<span style="font-size:0.75rem; color:#888; background:#eef2f7; padding:1px 5px; border-radius:4px; margin-right:4px;">${d.account}</span>` : '';
             
             if (d.type === '調整') {
               amtStr = (d.adjustSign > 0 ? '+' : '') + (d.adjustSign * d.amount); color = '#aaa';
@@ -1164,7 +1223,9 @@
             
             row.innerHTML = `
               <div style="flex:1; padding-right:10px;">
-                <div style="display:flex; align-items:center; margin-bottom:4px;">${prefix}<strong style="color:#555;">${d.mainCat || d.type || title}</strong><span style="color:#888; margin-left:5px;">${subText}</span></div>
+                <div style="display:flex; align-items:center; margin-bottom:4px; flex-wrap:wrap; gap:2px;">
+                  ${accInfo}${prefix}<strong style="color:#555;">${d.mainCat || d.type || title}</strong><span style="color:#888; margin-left:5px;">${subText}</span>
+                </div>
                 ${d.note ? `<div style="font-size:0.8rem; color:#aaa;">${d.note}</div>` : ''}
               </div>
               <div style="font-weight:bold; color:${color}; align-self:center; white-space:nowrap;">
@@ -1173,35 +1234,9 @@
             `;
             dateGroup.appendChild(row);
           });
-          content.appendChild(dateGroup);
+          container.appendChild(dateGroup);
         });
       });
-    }
-
-    async function openAccountDetails(accName) {
-      document.getElementById('modal-title').textContent = `帳戶明細 - ${accName} (載入近3個月紀錄...)`;
-      document.getElementById('modal-search-box').style.display = 'none';
-      document.getElementById('modal-content').innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;"><i class="fas fa-spinner fa-spin"></i> 正在調閱帳戶紀錄...</div>';
-      document.getElementById('modal').style.display = 'flex';
-
-      try {
-        const now = new Date();
-        let targetMonths = [];
-        for (let i = 0; i < 3; i++) {
-          let d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-          targetMonths.push(`${d.getFullYear()}/${d.getMonth() + 1}`);
-        }
-
-        const snapshot = await db.collection('entries').where('month', 'in', targetMonths).get();
-        let allDocs = [];
-        snapshot.forEach(doc => allDocs.push({ rowId: doc.id, ...doc.data() }));
-
-        let accDocs = allDocs.filter(d => d.account === accName || (d.type === '轉帳' && d.account2 === accName));
-        openDetailsModal('帳戶明細 (近3個月)', accName, accDocs, accName, true, true);
-      } catch (err) {
-        console.error("帳戶明細載入失敗", err);
-        document.getElementById('modal-content').innerHTML = '<div style="text-align:center;color:red;padding:20px;">載入失敗，請重試</div>';
-      }
     }
 
     async function adjustBalance(acc, curBal) {
